@@ -1,0 +1,73 @@
+﻿{
+  "inputs": [
+    { "name": "x1" },
+    { "name": "x2" }
+  ],
+  "outputs": [
+    {
+      "name": "and",
+      "input": "1"
+    },
+    {
+      "name": "and-not",
+      "input": "2"
+    },
+    {
+      "name": "or",
+      "input": "3"
+    },
+    {
+      "name": "or-not",
+      "input": "4"
+    },
+    {
+      "name": "xor",
+      "input": "5"
+    },
+    {
+      "name": "xor-not",
+      "input": "6"
+    },
+    {
+      "name": "not",
+      "input": "7"
+    }
+  ],
+  "components": [
+    {
+      "type": "And",
+      "name": "1",
+      "input": [ "x1", "x2" ]
+    },
+    {
+      "type": "AndNot",
+      "name": "2",
+      "input": [ "x1", "x2" ]
+    },
+    {
+      "type": "Or",
+      "name": "3",
+      "input": [ "x1", "x2" ]
+    },
+    {
+      "type": "OrNot",
+      "name": "4",
+      "input": [ "x1", "x2" ]
+    },
+    {
+      "type": "Xor",
+      "name": "5",
+      "input": [ "x1", "x2" ]
+    },
+    {
+      "type": "XorNot",
+      "name": "6",
+      "input": [ "x1", "x2" ]
+    },
+    {
+      "type": "Not",
+      "name": "7",
+      "input": [ "x1" ]
+    }
+  ]
+}
