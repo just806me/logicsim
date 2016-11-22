@@ -240,3 +240,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/docs/logic sim.docx
+/docs/example.jsch
+/docs

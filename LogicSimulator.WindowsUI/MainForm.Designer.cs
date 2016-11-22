@@ -41,9 +41,9 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fromEquationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.getEquationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timeDiagramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -51,7 +51,6 @@
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.schemeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.calculateSchemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearSchemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox = new System.Windows.Forms.ListBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -60,12 +59,11 @@
             this.connectionButton = new System.Windows.Forms.ToolStripButton();
             this.deleteButton = new System.Windows.Forms.ToolStripButton();
             this.elementMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.createConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteElementMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.calculateElementMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteElementMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearElementMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.printDialog = new System.Windows.Forms.PrintDialog();
@@ -130,7 +128,7 @@
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Text = "Save as";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
@@ -167,31 +165,31 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.calculateToolStripMenuItem,
             this.fromEquationToolStripMenuItem,
-            this.getEquationToolStripMenuItem});
+            this.calculateToolStripMenuItem,
+            this.timeDiagramToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.editToolStripMenuItem.Text = "Tools";
             // 
-            // calculateToolStripMenuItem
-            // 
-            this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
-            this.calculateToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.calculateToolStripMenuItem.Text = "Calculate Scheme";
-            this.calculateToolStripMenuItem.Click += new System.EventHandler(this.calculateElementMenuStripItem_Click);
-            // 
             // fromEquationToolStripMenuItem
             // 
             this.fromEquationToolStripMenuItem.Name = "fromEquationToolStripMenuItem";
-            this.fromEquationToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.fromEquationToolStripMenuItem.Text = "From Equation";
+            this.fromEquationToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fromEquationToolStripMenuItem.Text = "From equation";
             // 
-            // getEquationToolStripMenuItem
+            // calculateToolStripMenuItem
             // 
-            this.getEquationToolStripMenuItem.Name = "getEquationToolStripMenuItem";
-            this.getEquationToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.getEquationToolStripMenuItem.Text = "Get Equation";
+            this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
+            this.calculateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.calculateToolStripMenuItem.Text = "Table of values";
+            this.calculateToolStripMenuItem.Click += new System.EventHandler(this.tableOfValuesElementMenuStripItem_Click);
+            // 
+            // timeDiagramToolStripMenuItem
+            // 
+            this.timeDiagramToolStripMenuItem.Name = "timeDiagramToolStripMenuItem";
+            this.timeDiagramToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.timeDiagramToolStripMenuItem.Text = "Time diagram";
             // 
             // helpToolStripMenuItem
             // 
@@ -251,23 +249,15 @@
             // schemeMenuStrip
             // 
             this.schemeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.calculateSchemeMenuItem,
             this.clearSchemeMenuItem});
             this.schemeMenuStrip.Name = "elementMenuStrip";
-            this.schemeMenuStrip.Size = new System.Drawing.Size(169, 48);
-            // 
-            // calculateSchemeMenuItem
-            // 
-            this.calculateSchemeMenuItem.Name = "calculateSchemeMenuItem";
-            this.calculateSchemeMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.calculateSchemeMenuItem.Text = "Calculate Scheme";
-            this.calculateSchemeMenuItem.Click += new System.EventHandler(this.calculateElementMenuStripItem_Click);
+            this.schemeMenuStrip.Size = new System.Drawing.Size(117, 26);
             // 
             // clearSchemeMenuItem
             // 
             this.clearSchemeMenuItem.Name = "clearSchemeMenuItem";
-            this.clearSchemeMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.clearSchemeMenuItem.Text = "Clear All";
+            this.clearSchemeMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.clearSchemeMenuItem.Text = "Clear all";
             this.clearSchemeMenuItem.Click += new System.EventHandler(this.clearElementMenuStripItem_Click);
             // 
             // listBox
@@ -304,7 +294,7 @@
             this.moveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.moveButton.Name = "moveButton";
             this.moveButton.Size = new System.Drawing.Size(23, 23);
-            this.moveButton.ToolTipText = "Move Elements";
+            this.moveButton.ToolTipText = "Move elements";
             this.moveButton.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // addButton
@@ -317,7 +307,7 @@
             this.addButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(23, 23);
-            this.addButton.ToolTipText = "Add Elements";
+            this.addButton.ToolTipText = "Add elements";
             this.addButton.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // connectionButton
@@ -328,7 +318,7 @@
             this.connectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.connectionButton.Name = "connectionButton";
             this.connectionButton.Size = new System.Drawing.Size(23, 23);
-            this.connectionButton.ToolTipText = "Create Connections";
+            this.connectionButton.ToolTipText = "Connect elements";
             this.connectionButton.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // deleteButton
@@ -338,67 +328,59 @@
             this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(23, 23);
-            this.deleteButton.ToolTipText = "Delete Elements";
+            this.deleteButton.ToolTipText = "Delete elements";
             this.deleteButton.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // elementMenuStrip
             // 
             this.elementMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createConnectionToolStripMenuItem,
             this.renameElementToolStripMenuItem,
             this.moveElementToolStripMenuItem,
-            this.deleteElementMenuStripItem,
-            this.createConnectionToolStripMenuItem,
             this.toolStripMenuItem3,
-            this.calculateElementMenuStripItem,
+            this.deleteElementMenuStripItem,
             this.clearElementMenuStripItem});
             this.elementMenuStrip.Name = "elementMenuStrip";
-            this.elementMenuStrip.Size = new System.Drawing.Size(169, 142);
+            this.elementMenuStrip.Size = new System.Drawing.Size(120, 120);
+            // 
+            // createConnectionToolStripMenuItem
+            // 
+            this.createConnectionToolStripMenuItem.Name = "createConnectionToolStripMenuItem";
+            this.createConnectionToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.createConnectionToolStripMenuItem.Text = "Connect";
+            this.createConnectionToolStripMenuItem.Click += new System.EventHandler(this.createConnectionToolStripMenuItem_Click);
             // 
             // renameElementToolStripMenuItem
             // 
             this.renameElementToolStripMenuItem.Name = "renameElementToolStripMenuItem";
-            this.renameElementToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.renameElementToolStripMenuItem.Text = "Rename Element";
+            this.renameElementToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.renameElementToolStripMenuItem.Text = "Rename";
             this.renameElementToolStripMenuItem.Click += new System.EventHandler(this.renameElementToolStripMenuItem_Click);
             // 
             // moveElementToolStripMenuItem
             // 
             this.moveElementToolStripMenuItem.Name = "moveElementToolStripMenuItem";
-            this.moveElementToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.moveElementToolStripMenuItem.Text = "Move Element";
+            this.moveElementToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.moveElementToolStripMenuItem.Text = "Move";
             this.moveElementToolStripMenuItem.Click += new System.EventHandler(this.moveElementToolStripMenuItem_Click);
-            // 
-            // deleteElementMenuStripItem
-            // 
-            this.deleteElementMenuStripItem.Name = "deleteElementMenuStripItem";
-            this.deleteElementMenuStripItem.Size = new System.Drawing.Size(168, 22);
-            this.deleteElementMenuStripItem.Text = "Delete Element";
-            this.deleteElementMenuStripItem.Click += new System.EventHandler(this.deleteElementMenuStripItem_Click);
-            // 
-            // createConnectionToolStripMenuItem
-            // 
-            this.createConnectionToolStripMenuItem.Name = "createConnectionToolStripMenuItem";
-            this.createConnectionToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.createConnectionToolStripMenuItem.Text = "Connect Element";
-            this.createConnectionToolStripMenuItem.Click += new System.EventHandler(this.createConnectionToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(165, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(116, 6);
             // 
-            // calculateElementMenuStripItem
+            // deleteElementMenuStripItem
             // 
-            this.calculateElementMenuStripItem.Name = "calculateElementMenuStripItem";
-            this.calculateElementMenuStripItem.Size = new System.Drawing.Size(168, 22);
-            this.calculateElementMenuStripItem.Text = "Calculate Scheme";
-            this.calculateElementMenuStripItem.Click += new System.EventHandler(this.calculateElementMenuStripItem_Click);
+            this.deleteElementMenuStripItem.Name = "deleteElementMenuStripItem";
+            this.deleteElementMenuStripItem.Size = new System.Drawing.Size(119, 22);
+            this.deleteElementMenuStripItem.Text = "Delete";
+            this.deleteElementMenuStripItem.Click += new System.EventHandler(this.deleteElementMenuStripItem_Click);
             // 
             // clearElementMenuStripItem
             // 
             this.clearElementMenuStripItem.Name = "clearElementMenuStripItem";
-            this.clearElementMenuStripItem.Size = new System.Drawing.Size(168, 22);
-            this.clearElementMenuStripItem.Text = "Clear All";
+            this.clearElementMenuStripItem.Size = new System.Drawing.Size(119, 22);
+            this.clearElementMenuStripItem.Text = "Clear all";
             this.clearElementMenuStripItem.Click += new System.EventHandler(this.clearElementMenuStripItem_Click);
             // 
             // exportFileDialog
@@ -467,19 +449,17 @@
         private System.Windows.Forms.ContextMenuStrip elementMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem deleteElementMenuStripItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem calculateElementMenuStripItem;
         private System.Windows.Forms.ToolStripMenuItem clearElementMenuStripItem;
         private System.Windows.Forms.ContextMenuStrip schemeMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem calculateSchemeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearSchemeMenuItem;
         private System.Windows.Forms.SaveFileDialog exportFileDialog;
         private System.Windows.Forms.ToolStripMenuItem exportAsHTMLToolStripMenuItem;
         private System.Windows.Forms.PrintDialog printDialog;
         private System.Windows.Forms.ToolStripMenuItem fromEquationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem getEquationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameElementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveElementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createConnectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem timeDiagramToolStripMenuItem;
     }
 }
 

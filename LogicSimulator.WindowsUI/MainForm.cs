@@ -353,7 +353,7 @@ namespace LogicSimulator.WindowsUI
             pictureBox.Image = scheme.Draw(mainPen);
         }
 
-        private void calculateElementMenuStripItem_Click(object sender, EventArgs e)
+        private void tableOfValuesElementMenuStripItem_Click(object sender, EventArgs e)
         {
             try
             {
