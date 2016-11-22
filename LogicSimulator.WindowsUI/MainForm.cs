@@ -451,10 +451,8 @@ namespace LogicSimulator.WindowsUI
 		{
 			try
 			{
-				
-					using (var form = new TimeDiagramDialog(scheme.Scheme))
-						form.ShowDialog();
-			
+				using (var form = new TimeDiagramDialog(scheme.Scheme))
+					form.ShowDialog();
 			}
 			catch (SchemeException exception)
 			{
