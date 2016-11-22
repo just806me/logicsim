@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 
@@ -152,6 +154,139 @@ namespace LogicSimulator.Main
 			}
 
 			return table;
+		}
+
+		const int fieldFirstWidth = 60;
+		const int fieldStepWidth = 15;
+		const int fieldHeight = 30;
+
+		public Bitmap DrawTimeDiagram(uint[] InputDelays, uint TimeLimit)
+		{
+			var rows = _inputs.Select(x => x.Name).Concat(_outputs.Select(x => x.Name)).ToArray();
+
+			int ImgRows = _inputs.Count + _outputs.Count;
+			int ImgStepColumns = (int)(TimeLimit);
+			int ImgWidth = fieldFirstWidth + ImgStepColumns * fieldStepWidth;
+			int ImgHeight = fieldHeight * ImgRows;
+
+			var bt = new Bitmap(ImgWidth, ImgHeight);
+			var gr = Graphics.FromImage(bt);
+
+			gr.FillRectangle(Brushes.White, 0, 0, ImgWidth, ImgHeight);
+
+			Pen gridPen = new Pen(Color.Black);
+			gridPen.DashStyle = DashStyle.Solid;
+
+			for (int gor = 1; gor <= ImgRows; gor++)
+			{
+				gr.DrawLine(gridPen, 0, gor * fieldHeight, ImgWidth, gor * fieldHeight);
+				gr.DrawString(rows[gor - 1], new Font("Arial", 10), Brushes.Black,
+					new RectangleF(5, gor * fieldHeight - 20, fieldFirstWidth, 20));
+			}
+
+			gridPen.Width = 2;
+			gr.DrawLine(gridPen, fieldFirstWidth, 0, fieldFirstWidth, ImgHeight);
+			gridPen.Width = 1;
+
+			gridPen.Color = Color.Gray;
+			gridPen.DashStyle = DashStyle.Dot;
+			for (int ver = 0; ver <= ImgStepColumns; ver++)
+				gr.DrawLine(gridPen, fieldFirstWidth + ver * fieldStepWidth, 0,
+					fieldFirstWidth + ver * fieldStepWidth, ImgHeight);
+
+			gridPen.Color = Color.Red;
+			gridPen.Width = 2;
+			gridPen.DashStyle = DashStyle.Solid;
+
+			uint CurrentTick = 0, CurrentColumn = 0;
+			uint[] LastInputChangeTick = new uint[_inputs.Count];
+			ElementValue[] state = new ElementValue[_inputs.Count];
+			for (int i = 0; i < _inputs.Count; i++)
+				state[i] = new ElementValue() { Delay = 0, Value = false };
+
+			while (CurrentTick < TimeLimit)
+			{
+				for (int i = 0; i < _inputs.Count; i++)
+					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i])
+					{
+						LastInputChangeTick[i] = CurrentTick;
+						state[i].Value = !state[i].Value;
+					}
+
+				SetCurrentState(state);
+				CalculateForCurrentState();
+
+				for (int rw = 0; rw < ImgRows; rw++)
+				{
+					if (rw < _inputs.Count)
+						gr.DrawLine(gridPen,
+							fieldFirstWidth + CurrentColumn * fieldStepWidth, (rw + (state[rw].Value.Value ? .3f : 1f)) * fieldHeight,
+							fieldFirstWidth + (CurrentColumn + 1) * fieldStepWidth, (rw + (state[rw].Value.Value ? .3f : 1f)) * fieldHeight);
+					else
+						gr.DrawLine(gridPen,
+							fieldFirstWidth + CurrentColumn * fieldStepWidth,
+							(rw + (_outputs[rw - _inputs.Count].Value.Value.Value ? .3f : 1f)) * fieldHeight,
+							fieldFirstWidth + (CurrentColumn + 1) * fieldStepWidth,
+							(rw + (_outputs[rw - _inputs.Count].Value.Value.Value ? .3f : 1f)) * fieldHeight);
+				}
+
+				CurrentColumn++;
+				CurrentTick += 1;
+			}
+			gr.Dispose();
+			return bt;
+		}
+
+		private Bitmap DrawTimeWorkDiagram()
+		{
+			//int ImgColumns = 1 + table.GetLength(0);
+			//int ImgRows = table.GetLength(1);
+			//int ImgWidth = fieldWidth * ImgColumns;
+			//int ImgHeight = fieldHeight * ImgRows;
+
+			//Image img = diagramBox.Image;
+
+			//var bt = new Bitmap(ImgWidth, ImgHeight);
+			//var gr = Graphics.FromImage(bt);
+
+			//gr.FillRectangle(Brushes.White, 0, 0, ImgWidth, ImgHeight);
+
+			//Pen gridPen = new Pen(Color.Black);
+			//gridPen.DashStyle = DashStyle.Solid;
+
+			//for (int gor = 1; gor <= ImgRows; gor++)
+			//{
+			//	gr.DrawLine(gridPen, 0, gor * fieldHeight, ImgWidth, gor * fieldHeight);
+			//	gr.DrawString(rows[gor - 1], new Font("Arial", 10), Brushes.Black,
+			//		new RectangleF(5, gor * fieldHeight - 20, fieldWidth, 20));
+			//}
+
+			//gridPen.Width = 2;
+			//gr.DrawLine(gridPen, fieldWidth, 0, fieldWidth, ImgHeight);
+			//gridPen.Width = 1;
+
+			//gridPen.DashStyle = DashStyle.Dash;
+			//for (int ver = 2; ver <= ImgColumns; ver++)
+			//	gr.DrawLine(gridPen, ver * fieldWidth, 0, ver * fieldWidth, ImgHeight);
+
+			//gridPen.Color = Color.Red;
+			//gridPen.Width = 2;
+			//gridPen.DashStyle = DashStyle.Solid;
+
+			//for (int rw = 0; rw < ImgRows; rw++)
+			//{
+			//	List<Point> sigLv = new List<Point>();
+			//	for (int st = 0; st < ImgColumns - 1; st++)
+			//	{
+			//		sigLv.Add(new Point((st + 1) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
+			//		sigLv.Add(new Point((st + 2) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
+			//	}
+
+			//	gr.DrawLines(gridPen, sigLv.ToArray());
+			//}
+			//gr.Dispose();
+
+			return null;
 		}
 
 		public void WriteTable(Stream stream, ElementValue[,] table)

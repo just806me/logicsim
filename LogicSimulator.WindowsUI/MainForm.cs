@@ -447,9 +447,19 @@ namespace LogicSimulator.WindowsUI
             menuElement = null;
         }
 
-        private void fromEquationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // TODO
-        }
-    }
+		private void timeDiagramToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				
+					using (var form = new TimeDiagramDialog(scheme.Scheme))
+						form.ShowDialog();
+			
+			}
+			catch (SchemeException exception)
+			{
+				ShowError($"Scheme is invalid!", exception);
+			}
+		}
+	}
 }
