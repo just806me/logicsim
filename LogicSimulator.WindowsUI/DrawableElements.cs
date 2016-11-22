@@ -262,7 +262,7 @@ namespace LogicSimulator.WindowsUI
         [JsonIgnore]
         public string Name { get { return string.Empty; } set { } }
         [JsonIgnore]
-        public bool? Value { get; set; }
+        public ElementValue Value { get; set; }
         [JsonIgnore]
         public int Height
         {

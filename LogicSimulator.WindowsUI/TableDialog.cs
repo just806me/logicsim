@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LogicSimulator.Main;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace LogicSimulator.WindowsUI
 {
     public partial class TableDialog : Form
     {
-        public TableDialog(bool[,] table, string[] header)
+        public TableDialog(ElementValue[,] table, string[] header)
         {
             InitializeComponent();
 
@@ -26,7 +27,7 @@ namespace LogicSimulator.WindowsUI
                 row.CreateCells(dataGridView);
 
                 for (int c = 0; c < width; c++)
-                    row.Cells[c].Value = Convert.ToInt16(table[r, c]);
+                    row.Cells[c].Value = Convert.ToInt16(table[r, c].Value);
 
                 dataGridView.Rows.Add(row);
             }
