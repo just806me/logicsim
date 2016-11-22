@@ -322,13 +322,14 @@ namespace LogicSimulator.Main
 			using (var writer = new StreamWriter(stream))
 			{
 				writer.Write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>Table of values</title><style>table * {padding: 5px; text-align: center;} table {border: 1px solid black;} th {border-bottom: 1px solid black;} .border-left {margin-left: 1px; border-left: 1px solid black;}</style></head><body><table cellspacing='0' cellpadding='0'>");
-				writer.Write($"<tr><th>{string.Join("</th><th>", _elements.Where(e => e is Input).Select(i => i.Name))}</th><th class='border-left'>{string.Join("</th><th>", _elements.Where(e => e is Output).Select(o => o.Name))}</th></tr>");
+				writer.Write($"<tr><th>{string.Join("</th><th>", _elements.Where(e => e is Input).Select(i => i.Name))}</th><th class='border-left'>{string.Join("</th><th>", _elements.Where(e => e is Output).Select(o => $"{o.Name}</th><th>τ"))}</th></tr>");
 				for (int i = 0; i < table_Count[0]; i++)
 				{
 					writer.Write("<tr>");
 					for (int j = 0; j < table_Count[1]; j++)
-						writer.Write($"<td{(j == _inputs.Count ? " class='border-left'" : string.Empty)}>{Convert.ToInt16(table[i, j].Value)}(t = {Convert.ToInt16(table[i, j].Delay)})</td>");
-					writer.Write("</tr>");
+						writer.Write($"<td{(j == _inputs.Count ? " class='border-left'" : string.Empty)}>{Convert.ToInt16(table[i, j].Value)}{(j >= _inputs.Count ? "</td><td>" + Convert.ToInt32(table[i, j].Delay).ToString() : string.Empty)}</td>");
+
+                    writer.Write("</tr>");
 				}
 				writer.Write("</table></body></html>");
 			}
