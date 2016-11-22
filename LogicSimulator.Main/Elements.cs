@@ -6,10 +6,16 @@ using System.Linq;
 
 namespace LogicSimulator.Main
 {
+	public struct ElementValue
+	{
+		public bool? Value { get; set; }
+		public uint? Delay { get; set; }
+	}
+
     public interface IElement
     {
         string Name { get; set; }
-        bool? Value { get; set;  }
+		ElementValue Value { get; set; }
     }
 
     public class Component : IElement
@@ -22,7 +28,7 @@ namespace LogicSimulator.Main
         [JsonRequired]
         public string Name { get; set; }
         [JsonIgnore]
-        public bool? Value { get; set; }
+        public ElementValue Value { get; set; }
 
         [JsonConstructor]
         public Component(string name, ComponentType type, IEnumerable<string> input)
@@ -30,59 +36,90 @@ namespace LogicSimulator.Main
             Name = name;
             Type = type;
             _input = input.ToList();
-        }
+			Value = new ElementValue();
+		}
 
-        public void Calculate(bool[] inputValues)
+        public void Calculate(ElementValue[] inputValues)
         {
             #region arguments check
 
             if (inputValues == null)
                 throw new ArgumentNullException(nameof(inputValues));
 
-            #endregion
+			#endregion
 
+			ElementValue tmp = new ElementValue();
             switch (Type)
             {
                 case ComponentType.And:
-                    Value = true;
-                    foreach (var value in inputValues)
-                        Value = Value.Value && value;
-                    break;
+					tmp.Value = true;
+                    foreach (var inputValue in inputValues)
+						tmp.Value = tmp.Value.Value && inputValue.Value.Value;
+
+					if (tmp.Value == true)
+						tmp.Delay = inputValues.Max(x => x.Delay) + 1;
+					else
+						tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					break;
                 case ComponentType.AndNot:
-                    Value = true;
-                    foreach (var value in inputValues)
-                        Value = Value.Value && value;
-                    Value = !Value.Value;
+					tmp.Value = true;
+					foreach (var inputValue in inputValues)
+						tmp.Value = tmp.Value.Value && inputValue.Value.Value;
+
+					if (tmp.Value == true)
+						tmp.Delay = inputValues.Max(x => x.Delay) + 1;
+					else
+						tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+
+					tmp.Value = !tmp.Value;
                     break;
                 case ComponentType.Or:
-                    Value = false;
-                    foreach (var value in inputValues)
-                        Value = Value.Value || value;
-                    break;
+					tmp.Value = false;
+                    foreach (var inputValue in inputValues)
+						tmp.Value = tmp.Value.Value || inputValue.Value.Value;
+
+					if (tmp.Value == true)
+						tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+					else
+						tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+					break;
                 case ComponentType.OrNot:
-                    Value = false;
-                    foreach (var value in inputValues)
-                        Value = Value.Value || value;
-                    Value = !Value.Value;
+					tmp.Value = false;
+					foreach (var inputValue in inputValues)
+						tmp.Value = tmp.Value.Value || inputValue.Value.Value;
+
+					if (tmp.Value == true)
+						tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+					else
+						tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+
+					tmp.Value = !tmp.Value;
                     break;
                 case ComponentType.Xor:
-                    Value = false;
-                    foreach (var value in inputValues)
-                        Value = Value.Value ^ value;
-                    break;
+					tmp.Value = false;
+                    foreach (var inputValue in inputValues)
+						tmp.Value = tmp.Value.Value ^ inputValue.Value.Value;
+
+					tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+					break;
                 case ComponentType.XorNot:
-                    Value = false;
-                    foreach (var value in inputValues)
-                        Value = Value.Value ^ value;
-                    Value = !Value.Value;
+					tmp.Value = false;
+					foreach (var inputValue in inputValues)
+						tmp.Value = tmp.Value.Value ^ inputValue.Value.Value;
+
+					tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+
+					tmp.Value = !tmp.Value;
                     break;
                 case ComponentType.Not:
-                    Value = !inputValues[0];
+					tmp.Value = !inputValues[0].Value.Value;
+					tmp.Delay = inputValues[0].Delay + 1;
                     break;
                 default:
                     break;
             }
-        }
+			Value = tmp;
+		}
 
         public void AddInput(string input)
         {
@@ -125,7 +162,7 @@ namespace LogicSimulator.Main
         [JsonRequired]
         public string Name { get; set; }
         [JsonIgnore]
-        public bool? Value { get; set; }
+        public ElementValue Value { get; set; }
 
         [JsonConstructor]
         public Input(string name)
@@ -139,7 +176,7 @@ namespace LogicSimulator.Main
         [JsonRequired]
         public string Name { get; set; }
         [JsonIgnore]
-        public bool? Value { get; set; }
+        public ElementValue Value { get; set; }
         [JsonRequired]
         public string Input { get; set; }
 
@@ -148,6 +185,6 @@ namespace LogicSimulator.Main
         {
             Name = name;
             Input = input;
-        }
+		}
     }
 }
