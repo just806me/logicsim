@@ -28,9 +28,11 @@ namespace LogicSimulator.Main
 		private List<Component> _components;
 
 		[JsonIgnore]
-		private List<List<Component>> ComponentLayers;
+        public ReadOnlyCollection<ReadOnlyCollection<Component>> ComponentLayers 
+            => new ReadOnlyCollection<ReadOnlyCollection<Component>>(_componentLayers.Select(x => new ReadOnlyCollection<Component>(x)).ToList());
+        private List<List<Component>> _componentLayers;
 
-		public Scheme(IEnumerable<Input> inputs, IEnumerable<Output> outputs, IEnumerable<Component> components)
+        public Scheme(IEnumerable<Input> inputs, IEnumerable<Output> outputs, IEnumerable<Component> components)
 		{
 			_inputs = inputs.ToList();
 			_outputs = outputs.ToList();
@@ -39,7 +41,7 @@ namespace LogicSimulator.Main
 
 			#region split components to layers
 
-			ComponentLayers = new List<List<Component>>();
+			_componentLayers = new List<List<Component>>();
 
 			var addedList = new List<IElement>();
 			addedList.AddRange(inputs);
@@ -50,7 +52,7 @@ namespace LogicSimulator.Main
 				if (toadd.Any())
 				{
 					addedList.AddRange(toadd);
-					ComponentLayers.Add(toadd);
+					_componentLayers.Add(toadd);
 				}
 				else
 				{
@@ -61,7 +63,92 @@ namespace LogicSimulator.Main
 			#endregion
 		}
 
-		public void SetCurrentState(IEnumerable<ElementValue> state)
+        private static List<string> baseFuncs = new List<string> { "(", "!", "*", "+", ")" };
+
+        public static Scheme FromEquation(string equation)
+        {
+            var inputs = new List<Input>();
+            var components = new List<Component>();
+
+            foreach (var baseFunc in baseFuncs)
+                equation = equation.Replace(baseFunc, $" {baseFunc} ");
+
+            equation = $"( {equation} )";
+
+            var operands = new Stack<string>();
+            var functions = new Stack<string>();
+
+            Action calc = () =>
+            {
+                string op1, op2;
+                Component component;
+
+                switch (functions.Pop())
+                {
+                    case "!":
+                        op1 = operands.Pop();
+
+                        component = new Component($"c{components.Count}", ComponentType.Not, new[] { op1 });
+                        components.Add(component);
+
+                        operands.Push(component.Name);
+                        break;
+                    case "+":
+                        op1 = operands.Pop();
+                        op2 = operands.Pop();
+
+                        component = new Component($"c{components.Count}", ComponentType.Or, new[] { op2, op1 });
+                        components.Add(component);
+
+                        operands.Push(component.Name);
+                        break;
+                    case "*":
+                        op1 = operands.Pop();
+                        op2 = operands.Pop();
+
+                        component = new Component($"c{components.Count}", ComponentType.And, new[] { op2, op1 });
+                        components.Add(component);
+
+                        operands.Push(component.Name);
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            foreach (var item in equation.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                // if item is function
+                if (baseFuncs.Contains(item))
+                {
+                    if (item == ")")
+                    {
+                        while (functions.Count > 0 && functions.Peek() != "(")
+                            calc();
+                        functions.Pop();
+                    }
+                    // if we can calculate previous
+                    else if (functions.Count != 0 && item != "(" && functions.Peek() != "(" && baseFuncs.IndexOf(item) >= baseFuncs.IndexOf(functions.Peek()))
+                    {
+                        calc();
+                        functions.Push(item);
+                    }
+                    else
+                        functions.Push(item);
+                }
+                // if item is operator
+                else
+                {
+                    inputs.Add(new Input(item));
+                    operands.Push(item);
+                }
+            }
+
+            var outputs = new[] { new Output("y", operands.Pop()) };
+            return new Scheme(inputs, outputs, components);
+        }
+
+        public void SetCurrentState(IEnumerable<ElementValue> state)
 		{
 			#region arguments check
 
@@ -105,7 +192,7 @@ namespace LogicSimulator.Main
 
 		public void CalculateForCurrentState()
 		{
-			foreach (var layer in ComponentLayers)
+			foreach (var layer in _componentLayers)
 				foreach (var component in layer)
 				{
 					var values = new ElementValue[component.Input.Count];
@@ -336,5 +423,5 @@ namespace LogicSimulator.Main
 		}
 
 		public void CalculateAndWriteTable(Stream stream) => WriteTable(stream, CalculateTable());
-	}
+    }
 }

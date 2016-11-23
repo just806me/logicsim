@@ -17,12 +17,7 @@ namespace LogicSimulator.WindowsUI
             #endregion
 
             var scheme = JsonConvert.DeserializeObject<DrawableScheme>(json);
-
-            foreach (var line in scheme.Lines)
-                line.connection = new Tuple<IMoveableElement, IMoveableElement>(
-                    scheme.Elements.FirstOrDefault(x => x is IMoveableElement && x.Name == line.connectionName.Item1) as IMoveableElement, 
-                    scheme.Elements.FirstOrDefault(x => x is IMoveableElement && x.Name == line.connectionName.Item2) as IMoveableElement
-                );
+            scheme.RestoreLines();
 
 			return scheme;
 		}

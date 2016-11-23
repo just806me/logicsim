@@ -50,10 +50,12 @@ namespace LogicSimulator.WindowsUI
         [JsonConstructor]
         public DrawableComponent(string name, ComponentType type, IEnumerable<string> input) : base(name, type, input) { }
 
-        public DrawableComponent(string name, ComponentType type, IEnumerable<string> input, int width, int height) : base(name, type, input)
+        public DrawableComponent(string name, ComponentType type, IEnumerable<string> input, int x, int y, int width, int height) : base(name, type, input)
         {
             Width = width;
             Height = height;
+            X = x;
+            Y = y;
         }
 
         public void Draw(Graphics graphics, Pen pen)
@@ -203,10 +205,12 @@ namespace LogicSimulator.WindowsUI
         [JsonConstructor]
         public DrawableInput(string name) : base(name) { }
 
-        public DrawableInput(string name, int width, int height) : base(name)
+        public DrawableInput(string name, int x, int y, int width, int height) : base(name)
         {
             Width = width;
             Height = height;
+            X = x;
+            Y = y;
         }
 
         public void Draw(Graphics graphics, Pen pen)
@@ -234,10 +238,12 @@ namespace LogicSimulator.WindowsUI
         [JsonConstructor]
         public DrawableOutput(string name, string input) : base(name, input) { }
 
-        public DrawableOutput(string name, string input, int width, int height) : base(name, input)
+        public DrawableOutput(string name, string input, int x, int y, int width, int height) : base(name, input)
         {
             Width = width;
             Height = height;
+            X = x;
+            Y = y;
         }
 
         public void Draw(Graphics graphics, Pen pen)

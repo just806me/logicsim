@@ -21,9 +21,6 @@ namespace LogicSimulator.WindowsUI
 
         private bool modified;
 
-        private const int ElementWidth = 40;
-        private const int ElementHeight = 30;
-
         public MainForm(string path)
         {
             InitializeComponent();
@@ -68,6 +65,19 @@ namespace LogicSimulator.WindowsUI
             pictureBox.Image = scheme.Draw(mainPen);
         }
 
+        public void LoadScheme(Scheme source)
+        {
+            filename = null;
+            modified = false;
+            dragElement = null;
+            connectLine = null;
+            menuElement = null;
+
+            scheme = DrawableScheme.FromScheme(source, pictureBox.Width, pictureBox.Height);
+
+            pictureBox.Image = scheme.Draw(mainPen);
+        }
+
         private void ShowError(string message, Exception exception)
         {
             MessageBox.Show(
@@ -95,7 +105,7 @@ namespace LogicSimulator.WindowsUI
                         break;
                 }
 
-            LoadScheme(null);
+            LoadScheme(string.Empty);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -291,8 +301,9 @@ namespace LogicSimulator.WindowsUI
 
                         dragElement = new DrawableInput(
                             $"x{max_input_number + 1}",
-                            ElementWidth,
-                            ElementHeight
+                            0, 0,
+                            DrawableScheme.ElementWidth,
+                            DrawableScheme.ElementHeight
                         );
                     }
                     break;
@@ -307,8 +318,9 @@ namespace LogicSimulator.WindowsUI
                         dragElement = new DrawableOutput(
                             $"y{max_output_number + 1}",
                             null,
-                            ElementWidth,
-                            ElementHeight
+                            0, 0,
+                            DrawableScheme.ElementWidth,
+                            DrawableScheme.ElementHeight
                         );
                     }
                     break;
@@ -327,8 +339,9 @@ namespace LogicSimulator.WindowsUI
                                 $"c{max_component_number + 1}",
                                 componentType,
                                 new string[] { },
-                                ElementWidth,
-                                ElementHeight
+                                0, 0,
+                                DrawableScheme.ElementWidth,
+                                DrawableScheme.ElementHeight
                             );
                         }
                     }
@@ -459,5 +472,32 @@ namespace LogicSimulator.WindowsUI
 				ShowError($"Scheme is invalid!", exception);
 			}
 		}
-	}
+
+        private void fromEquationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (modified)
+                switch (MessageBox.Show(
+                    "Do you want to save the current project?",
+                    "Close Project",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question)
+                )
+                {
+                    case DialogResult.Yes:
+                        saveToolStripMenuItem_Click(sender, e);
+                        break;
+                    default:
+                        break;
+                }
+
+            using (var form = new EquationDialog())
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    var equation = form.Equation;
+                    scheme = DrawableScheme.FromScheme(Scheme.FromEquation(equation), pictureBox.Width, pictureBox.Height);
+                    pictureBox.Image = scheme.Draw(mainPen);
+                }
+
+        }
+    }
 }

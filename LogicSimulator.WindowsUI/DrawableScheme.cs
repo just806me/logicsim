@@ -26,7 +26,7 @@ namespace LogicSimulator.WindowsUI
         [JsonRequired]
         public ReadOnlyCollection<DrawableComponent> Components =>
             _elements.Where(x => x is DrawableComponent).Cast<DrawableComponent>().ToList().AsReadOnly();
-        [JsonRequired]
+        [JsonIgnore]
         public ReadOnlyCollection<Line> Lines =>
             _elements.Where(x => x is Line).Cast<Line>().ToList().AsReadOnly();
 
@@ -38,6 +38,15 @@ namespace LogicSimulator.WindowsUI
         private Bitmap _bitmap;
         [JsonIgnore]
         private Graphics _graphics;
+        
+        [JsonIgnore]
+        public const int ElementWidth = 40;
+        [JsonIgnore]
+        public const int ElementHeight = 30;
+        [JsonIgnore]
+        public const int GapWidth = 30;
+        [JsonIgnore]
+        public const int GapHeight = 25;
 
         public DrawableScheme(int width, int height)
         {
@@ -48,8 +57,84 @@ namespace LogicSimulator.WindowsUI
         [JsonConstructor]
         public DrawableScheme(IEnumerable<DrawableInput> inputs, IEnumerable<DrawableOutput> outputs, IEnumerable<DrawableComponent> components, IEnumerable<Line> lines, int width, int height)
         {
-            _elements = inputs.Cast<IDrawableElement>().Concat(components).Concat(outputs).Concat(lines).ToList();
+            _elements = new List<IDrawableElement>();
+
+            if (inputs != null)
+                _elements.AddRange(inputs);
+            if (components != null)
+                _elements.AddRange(components);
+            if (outputs != null)
+                _elements.AddRange(outputs);
+            if (lines != null)
+                _elements.AddRange(lines);
+
             SetSize(width, height);
+        }
+
+        public static DrawableScheme FromScheme(Scheme scheme, int width, int height)
+        {
+            var elementX = 0;
+            var elementY = 0;
+
+            var drawableInputs = scheme.Inputs.Select(i => {
+                var input = new DrawableInput(i.Name, elementX, elementY, ElementWidth, ElementHeight);
+                elementY += GapHeight + ElementHeight;
+                return input;
+            }).ToArray();
+
+            elementX += GapWidth + ElementWidth;
+            elementY = 0;
+
+
+            var drawableComponents = new List<DrawableComponent>();
+            foreach (var layer in scheme.ComponentLayers)
+            {
+                drawableComponents.AddRange(layer.Select(c => {
+                    var component = new DrawableComponent(c.Name, c.Type, c.Input, elementX, elementY, ElementWidth, ElementHeight);
+                    elementY += GapHeight + ElementHeight;
+                    return component;
+                }).ToArray());
+
+                elementX += GapWidth + ElementWidth;
+                elementY = 0;
+            }
+
+            var drawableOutputs = scheme.Outputs.Select(o => {
+                var output = new DrawableOutput(o.Name, o.Input, elementX, elementY, ElementWidth, ElementHeight);
+                elementY += GapHeight + ElementHeight;
+                return output;
+            }).ToArray();
+
+            var drawableScheme = new DrawableScheme(drawableInputs, drawableOutputs, drawableComponents, null, width, height);
+            drawableScheme.RestoreLines();
+
+            return drawableScheme;
+        }
+
+        public void RestoreLines()
+        {
+            _elements.RemoveAll(x => Lines.Contains(x));
+
+            foreach (var component in Components)
+                foreach (var input in component.Input)
+                    _elements.Add(new Line(
+                        _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == input) as IMoveableElement,
+                        component
+                    ));
+
+            foreach (var output in Outputs)
+            {
+                _elements.Add(new Line(
+                    _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == output.Input) as IMoveableElement,
+                    output
+                ));
+            }
+
+            foreach (var line in Lines)
+                line.connection = new Tuple<IMoveableElement, IMoveableElement>(
+                    _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == line.connectionName.Item1) as IMoveableElement,
+                    _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == line.connectionName.Item2) as IMoveableElement
+                );
         }
 
         public void SetSize(int width, int height)
