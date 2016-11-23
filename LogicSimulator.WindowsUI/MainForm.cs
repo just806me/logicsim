@@ -493,9 +493,8 @@ namespace LogicSimulator.WindowsUI
             using (var form = new EquationDialog())
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    var equation = form.Equation;
-                    scheme = DrawableScheme.FromScheme(Scheme.FromEquation(equation), pictureBox.Width, pictureBox.Height);
-                    pictureBox.Image = scheme.Draw(mainPen);
+                    LoadScheme(Scheme.FromEquation(form.Equation));
+                    modified = true;
                 }
 
         }
