@@ -166,6 +166,12 @@ namespace LogicSimulator.WindowsUI
             return _bitmap;
         }
 
+        public IEnumerable<IDrawableElement> GetElementsAtRectangle(Rectangle bounds) 
+            => _elements.FindAll(e => e.IsInRectangle(bounds));
+
+        public IEnumerable<IDrawableElement> GetElementsAtRectangle(int x, int y, int width, int height)
+            => _elements.FindAll(e => e.IsInRectangle(x, y, width, height));
+
         public IDrawableElement GetElementAtLocation(Point p) => _elements.Find(e => e.ContainsLocation(p));
 
         public IDrawableElement GetElementAtLocation(int x, int y) => _elements.Find(e => e.ContainsLocation(x, y));

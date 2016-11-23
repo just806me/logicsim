@@ -192,7 +192,16 @@ namespace LogicSimulator.WindowsUI
             if (e.Button == MouseButtons.Left)
             {
                 if (dragElement != null)
-                    dragElement = null;
+                {
+                    var overflowElements = scheme.GetElementsAtRectangle(
+                        dragElement.X, 
+                        dragElement.Y, 
+                        dragElement.Width, 
+                        dragElement.Height
+                    );
+                    if (overflowElements.Count() == 0 || (overflowElements.Count() == 1 && overflowElements.Contains(dragElement)))
+                        dragElement = null;
+                }
                 else if (moveButton.Checked)
                 {
                     modified = true;

@@ -16,6 +16,8 @@ namespace LogicSimulator.WindowsUI
         void Draw(Graphics graphics, Pen pen);
         bool ContainsLocation(Point p);
         bool ContainsLocation(int x, int y);
+        bool IsInRectangle(Rectangle bounds);
+        bool IsInRectangle(int x, int y, int width, int height);
     }
 
     public interface IMoveableElement : IDrawableElement, IElement
@@ -189,6 +191,15 @@ namespace LogicSimulator.WindowsUI
         public bool ContainsLocation(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
 
         public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
+
+        public bool IsInRectangle(Rectangle rectangle) 
+            => rectangle.Contains(X, Y) 
+            || rectangle.Contains(X, Y + Height) 
+            || rectangle.Contains(X + Width, Y) 
+            || rectangle.Contains(X + Width, Y + Height) 
+            || rectangle.Contains(new Rectangle(X, Y, Width, Height));
+
+        public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
     }
 
     public class DrawableInput : Input, IMoveableElement
@@ -222,6 +233,15 @@ namespace LogicSimulator.WindowsUI
         public bool ContainsLocation(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
 
         public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
+
+        public bool IsInRectangle(Rectangle rectangle)
+            => rectangle.Contains(X, Y)
+            || rectangle.Contains(X, Y + Height)
+            || rectangle.Contains(X + Width, Y)
+            || rectangle.Contains(X + Width, Y + Height)
+            || rectangle.Contains(new Rectangle(X, Y, Width, Height));
+
+        public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
     }
 
     public class DrawableOutput : Output, IMoveableElement
@@ -255,6 +275,15 @@ namespace LogicSimulator.WindowsUI
         public bool ContainsLocation(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
 
         public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
+
+        public bool IsInRectangle(Rectangle rectangle)
+            => rectangle.Contains(X, Y)
+            || rectangle.Contains(X, Y + Height)
+            || rectangle.Contains(X + Width, Y)
+            || rectangle.Contains(X + Width, Y + Height)
+            || rectangle.Contains(new Rectangle(X, Y, Width, Height));
+
+        public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
     }
 
     public class Line : IDrawableElement
@@ -315,6 +344,10 @@ namespace LogicSimulator.WindowsUI
         public bool ContainsLocation(Point p) => false;
 
         public bool ContainsLocation(int x, int y) => false;
+
+        public bool IsInRectangle(Rectangle rectangle) => false;
+
+        public bool IsInRectangle(int x, int y, int width, int height) => false;
 
         internal bool ConnectedTo(IDrawableElement element)
             => connection.Item1 == element || connection.Item2 == element;
