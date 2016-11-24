@@ -139,7 +139,9 @@ namespace LogicSimulator.Main
                 // if item is operator
                 else
                 {
-                    inputs.Add(new Input(item));
+                    if (!inputs.Any(x => x.Name == item))
+                        inputs.Add(new Input(item));
+
                     operands.Push(item);
                 }
             }
