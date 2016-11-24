@@ -7,8 +7,11 @@ namespace LogicSimulator.Console
 {
     class Options
     {
-        [Option('i', "input", Required = true, HelpText = "Path to the jsch file with the logical scheme.")]
-        public string InputJson { get; set; }
+        [Option('e', "equation", Required = false, HelpText = "Logical equation. Example: (x1+!x2)*x3")]
+        public string InputEquation { get; set; }
+
+        [Option('f', "file", Required = false, HelpText = "Path to the jsch file with the logical scheme.")]
+        public string InputJsch { get; set; }
 
         [Option('t', "table", Required = true, HelpText = "Path to the html file where to write the table of values for the specified scheme.")]
         public string OutputTable { get; set; }
@@ -27,13 +30,24 @@ namespace LogicSimulator.Console
             var options = new Options();
             if (Parser.Default.ParseArguments(args, options))
             {
-                Scheme elements;
+                if (!string.IsNullOrEmpty(options.InputEquation))
+                {
+                    var scheme = Scheme.FromEquation(options.InputEquation);
 
-                using (var schemeFile = File.Open(options.InputJson, FileMode.Open))
-                    elements = SchemeStorage.Load(schemeFile);
+                    using (var tableFile = File.Open(options.OutputTable, FileMode.Create))
+                        scheme.CalculateAndWriteTable(tableFile);
+                }
 
-                using (var tableFile = File.Open(options.OutputTable, FileMode.Create))
-                    elements.CalculateAndWriteTable(tableFile);
+                if (!string.IsNullOrEmpty(options.InputJsch))
+                {
+                    Scheme scheme;
+
+                    using (var jschFile = File.Open(options.InputJsch, FileMode.Open))
+                        scheme = SchemeStorage.Load(jschFile);
+
+                    using (var tableFile = File.Open(options.OutputTable, FileMode.Create))
+                        scheme.CalculateAndWriteTable(tableFile);
+                }
             }
 
         }
