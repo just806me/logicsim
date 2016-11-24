@@ -18,15 +18,20 @@ namespace LogicSimulator.WindowsUI
             width += table.GetLength(1) - inputs_count;
 
             dataGridView.ColumnCount = width;
-
-            for (int c = 0; c < width; c++)
+            
+            for (int c = 0, h = 0; c < width; c++, h++)
             {
                 if (c < inputs_count)
-                    dataGridView.Columns[c].HeaderText = header[c];
-                else if (c % 2 == 1)
-                    dataGridView.Columns[c].HeaderText = header[c - (c - inputs_count) / 2];
+                {
+                    dataGridView.Columns[c].HeaderText = header[h];
+                }
                 else
+                {
+                    dataGridView.Columns[c].HeaderText = header[h];
+                    c++;
                     dataGridView.Columns[c].HeaderText = "τ";
+                }
+
             }
 
             for (int r = 0; r < height; r++)
@@ -34,14 +39,18 @@ namespace LogicSimulator.WindowsUI
                 var row = new DataGridViewRow();
                 row.CreateCells(dataGridView);
 
-                for (int c = 0; c < width; c++)
+                for (int c = 0, h = 0; c < width; c++, h++)
                 {
                     if (c < inputs_count)
-                        row.Cells[c].Value = Convert.ToInt16(table[r, c].Value);
-                    else if (c % 2 == 1)
-                        row.Cells[c].Value = Convert.ToInt16(table[r, c - (c - inputs_count) / 2].Value);
+                    {
+                        row.Cells[c].Value = Convert.ToInt16(table[r, h].Value);
+                    }
                     else
-                        row.Cells[c].Value = Convert.ToInt16(table[r, c - (c - inputs_count) / 2 - 1].Delay);
+                    {
+                        row.Cells[c].Value = Convert.ToInt16(table[r, h].Value);
+                        c++;
+                        row.Cells[c].Value = Convert.ToInt16(table[r, h].Delay);
+                    }
                 }
 
                 dataGridView.Rows.Add(row);
