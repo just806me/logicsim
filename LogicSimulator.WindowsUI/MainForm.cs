@@ -473,9 +473,12 @@ namespace LogicSimulator.WindowsUI
 		{
 			try
 			{
-				using (var form = new TimeDiagramDialog(scheme.Scheme))
-					form.ShowDialog();
-			}
+                if (scheme.Inputs.Any())
+				    using (var form = new TimeDiagramDialog(scheme.Scheme))
+					    form.ShowDialog();
+                else
+                    ShowError("Nothing to show", null);
+            }
 			catch (SchemeException exception)
 			{
 				ShowError($"Scheme is invalid!", exception);
