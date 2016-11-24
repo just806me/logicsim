@@ -9,17 +9,25 @@ namespace LogicSimulator.WindowsUI
 {
     public partial class TableDialog : Form
     {
-        public TableDialog(ElementValue[,] table, string[] header)
+        public TableDialog(ElementValue[,] table, string[] header, int inputs_count)
         {
             InitializeComponent();
 
             int height = table.GetLength(0);
             int width = table.GetLength(1);
+            width += table.GetLength(1) - inputs_count;
 
             dataGridView.ColumnCount = width;
 
             for (int c = 0; c < width; c++)
-                dataGridView.Columns[c].HeaderText = header[c];
+            {
+                if (c < inputs_count)
+                    dataGridView.Columns[c].HeaderText = header[c];
+                else if (c % 2 == 1)
+                    dataGridView.Columns[c].HeaderText = header[c - (c - inputs_count) / 2];
+                else
+                    dataGridView.Columns[c].HeaderText = "τ";
+            }
 
             for (int r = 0; r < height; r++)
             {
@@ -27,7 +35,14 @@ namespace LogicSimulator.WindowsUI
                 row.CreateCells(dataGridView);
 
                 for (int c = 0; c < width; c++)
-                    row.Cells[c].Value = Convert.ToInt16(table[r, c].Value);
+                {
+                    if (c < inputs_count)
+                        row.Cells[c].Value = Convert.ToInt16(table[r, c].Value);
+                    else if (c % 2 == 1)
+                        row.Cells[c].Value = Convert.ToInt16(table[r, c - (c - inputs_count) / 2].Value);
+                    else
+                        row.Cells[c].Value = Convert.ToInt16(table[r, c - (c - inputs_count) / 2 - 1].Delay);
+                }
 
                 dataGridView.Rows.Add(row);
             }

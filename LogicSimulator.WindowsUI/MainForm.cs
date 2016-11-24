@@ -386,7 +386,7 @@ namespace LogicSimulator.WindowsUI
                 ).ToArray();
 
                 if (table.Length > 0 && table.GetLength(1) == header.Length)
-                    using (var form = new TableDialog(table, header))
+                    using (var form = new TableDialog(table, header, scheme.Inputs.Count))
                         form.ShowDialog();
                 else
                     ShowError("Nothing to show", null);
