@@ -34,14 +34,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.simulationTimeNum = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.state1ChangeTimeNum = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.stateChangeTimeNum = new System.Windows.Forms.NumericUpDown();
+            this.state0ChangeTimeNum = new System.Windows.Forms.NumericUpDown();
             this.inputsComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.diagramBox)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.simulationTimeNum)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.stateChangeTimeNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.state1ChangeTimeNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.state0ChangeTimeNum)).BeginInit();
             this.SuspendLayout();
             // 
             // diagramBox
@@ -50,7 +53,7 @@
             this.diagramBox.Dock = System.Windows.Forms.DockStyle.Right;
             this.diagramBox.Location = new System.Drawing.Point(196, 0);
             this.diagramBox.Name = "diagramBox";
-            this.diagramBox.Size = new System.Drawing.Size(539, 152);
+            this.diagramBox.Size = new System.Drawing.Size(539, 179);
             this.diagramBox.TabIndex = 6;
             this.diagramBox.TabStop = false;
             // 
@@ -63,12 +66,12 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 152);
+            this.panel1.Size = new System.Drawing.Size(200, 179);
             this.panel1.TabIndex = 7;
             // 
             // runButton
             // 
-            this.runButton.Location = new System.Drawing.Point(11, 117);
+            this.runButton.Location = new System.Drawing.Point(11, 144);
             this.runButton.Name = "runButton";
             this.runButton.Size = new System.Drawing.Size(178, 23);
             this.runButton.TabIndex = 13;
@@ -79,7 +82,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(11, 93);
+            this.label2.Location = new System.Drawing.Point(12, 120);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 13);
             this.label2.TabIndex = 12;
@@ -87,7 +90,7 @@
             // 
             // simulationTimeNum
             // 
-            this.simulationTimeNum.Location = new System.Drawing.Point(94, 91);
+            this.simulationTimeNum.Location = new System.Drawing.Point(95, 118);
             this.simulationTimeNum.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -104,37 +107,61 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.state1ChangeTimeNum);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.stateChangeTimeNum);
+            this.groupBox1.Controls.Add(this.state0ChangeTimeNum);
             this.groupBox1.Controls.Add(this.inputsComboBox);
             this.groupBox1.Location = new System.Drawing.Point(11, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(178, 73);
+            this.groupBox1.Size = new System.Drawing.Size(178, 100);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Input settings";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 73);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(102, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "State 1 change time";
+            // 
+            // state1ChangeTimeNum
+            // 
+            this.state1ChangeTimeNum.Location = new System.Drawing.Point(115, 72);
+            this.state1ChangeTimeNum.Maximum = new decimal(new int[] {
+            250,
+            0,
+            0,
+            0});
+            this.state1ChangeTimeNum.Name = "state1ChangeTimeNum";
+            this.state1ChangeTimeNum.Size = new System.Drawing.Size(57, 20);
+            this.state1ChangeTimeNum.TabIndex = 7;
+            this.state1ChangeTimeNum.ValueChanged += new System.EventHandler(this.state1ChangeTimeNum_ValueChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(7, 47);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 13);
+            this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 6;
-            this.label1.Text = "State change time";
+            this.label1.Text = "State 0 change time";
             // 
-            // stateChangeTimeNum
+            // state0ChangeTimeNum
             // 
-            this.stateChangeTimeNum.Location = new System.Drawing.Point(106, 46);
-            this.stateChangeTimeNum.Maximum = new decimal(new int[] {
+            this.state0ChangeTimeNum.Location = new System.Drawing.Point(115, 46);
+            this.state0ChangeTimeNum.Maximum = new decimal(new int[] {
             250,
             0,
             0,
             0});
-            this.stateChangeTimeNum.Name = "stateChangeTimeNum";
-            this.stateChangeTimeNum.Size = new System.Drawing.Size(66, 20);
-            this.stateChangeTimeNum.TabIndex = 5;
-            this.stateChangeTimeNum.ValueChanged += new System.EventHandler(this.stateChangeTimeNum_ValueChanged);
+            this.state0ChangeTimeNum.Name = "state0ChangeTimeNum";
+            this.state0ChangeTimeNum.Size = new System.Drawing.Size(57, 20);
+            this.state0ChangeTimeNum.TabIndex = 5;
+            this.state0ChangeTimeNum.ValueChanged += new System.EventHandler(this.state0ChangeTimeNum_ValueChanged);
             // 
             // inputsComboBox
             // 
@@ -149,7 +176,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(735, 152);
+            this.ClientSize = new System.Drawing.Size(735, 179);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.diagramBox);
             this.Name = "TimeDiagramDialog";
@@ -161,7 +188,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.simulationTimeNum)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.stateChangeTimeNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.state1ChangeTimeNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.state0ChangeTimeNum)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -174,7 +202,9 @@
         private System.Windows.Forms.NumericUpDown simulationTimeNum;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown stateChangeTimeNum;
+        private System.Windows.Forms.NumericUpDown state0ChangeTimeNum;
         private System.Windows.Forms.ComboBox inputsComboBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown state1ChangeTimeNum;
     }
 }

@@ -8,7 +8,7 @@ namespace LogicSimulator.WindowsUI
 {
     public partial class TimeDiagramDialog : Form
 	{
-        uint[] stateChangeTimes;
+        uint[,] stateChangeTimes;
         Scheme scheme;
 
         public TimeDiagramDialog(Scheme Scheme)
@@ -17,9 +17,12 @@ namespace LogicSimulator.WindowsUI
 
             scheme = Scheme;
 
-            stateChangeTimes = new uint[scheme.Inputs.Count];
-            for (int i = 0; i < stateChangeTimes.Length; i++)
-                stateChangeTimes[i] = 5;
+            stateChangeTimes = new uint[scheme.Inputs.Count, 2];
+            for (int i = 0; i < scheme.Inputs.Count; i++)
+            {
+                stateChangeTimes[i, 0] = 5;
+                stateChangeTimes[i, 1] = 5;
+            }
 
             inputsComboBox.Items.AddRange(scheme.Inputs.Select(x => x.Name).ToArray());
             inputsComboBox.SelectedIndex = 0;
@@ -42,10 +45,16 @@ namespace LogicSimulator.WindowsUI
             );
         }
 
-        private void stateChangeTimeNum_ValueChanged(object sender, EventArgs e) 
-            => stateChangeTimes[inputsComboBox.SelectedIndex] = (uint)stateChangeTimeNum.Value;
+        private void state0ChangeTimeNum_ValueChanged(object sender, EventArgs e)
+            => stateChangeTimes[inputsComboBox.SelectedIndex, 0] = (uint)state0ChangeTimeNum.Value;
 
-        private void inputsComboBox_SelectedIndexChanged(object sender, EventArgs e) 
-            => stateChangeTimeNum.Value = stateChangeTimes[inputsComboBox.SelectedIndex];
+        private void state1ChangeTimeNum_ValueChanged(object sender, EventArgs e)
+            => stateChangeTimes[inputsComboBox.SelectedIndex, 1] = (uint)state1ChangeTimeNum.Value;
+
+        private void inputsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            state0ChangeTimeNum.Value = stateChangeTimes[inputsComboBox.SelectedIndex, 0];
+            state1ChangeTimeNum.Value = stateChangeTimes[inputsComboBox.SelectedIndex, 1];
+        }
     }
 }
