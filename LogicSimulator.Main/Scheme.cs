@@ -28,8 +28,8 @@ namespace LogicSimulator.Main
 		private List<Component> _components;
 
 		[JsonIgnore]
-        public ReadOnlyCollection<ReadOnlyCollection<Component>> ComponentLayers 
-            => new ReadOnlyCollection<ReadOnlyCollection<Component>>(_componentLayers.Select(x => new ReadOnlyCollection<Component>(x)).ToList());
+        public ReadOnlyCollection<Component>[] ComponentLayers 
+            => _componentLayers.Select(x => new ReadOnlyCollection<Component>(x)).ToArray();
         private List<List<Component>> _componentLayers;
 
         public Scheme(IEnumerable<Input> inputs, IEnumerable<Output> outputs, IEnumerable<Component> components)
@@ -213,11 +213,11 @@ namespace LogicSimulator.Main
 			var match = _elements.FirstOrDefault(e => e.Name == name);
 
 			if (match == null)
-				throw new InputNotFoundException(name);
+				throw new InputNotFoundException() { InputName = name };
 			if (!match.Value.Value.HasValue)
-				throw new InputHasNoValueException(name);
+				throw new InputHasNoValueException() { InputName = name };
 			if (!match.Value.Delay.HasValue)
-				throw new InputHasNoValueException(name);
+				throw new InputHasNoValueException() { InputName = name };
 
 			return match.Value;
 		}
@@ -326,57 +326,57 @@ namespace LogicSimulator.Main
 			return bt;
 		}
 
-		private Bitmap DrawTimeWorkDiagram()
+		/*private Bitmap DrawTimeWorkDiagram()
 		{
-			//int ImgColumns = 1 + table.GetLength(0);
-			//int ImgRows = table.GetLength(1);
-			//int ImgWidth = fieldWidth * ImgColumns;
-			//int ImgHeight = fieldHeight * ImgRows;
+            int ImgColumns = 1 + table.GetLength(0);
+            int ImgRows = table.GetLength(1);
+            int ImgWidth = fieldWidth * ImgColumns;
+            int ImgHeight = fieldHeight * ImgRows;
 
-			//Image img = diagramBox.Image;
+            Image img = diagramBox.Image;
 
-			//var bt = new Bitmap(ImgWidth, ImgHeight);
-			//var gr = Graphics.FromImage(bt);
+            var bt = new Bitmap(ImgWidth, ImgHeight);
+            var gr = Graphics.FromImage(bt);
 
-			//gr.FillRectangle(Brushes.White, 0, 0, ImgWidth, ImgHeight);
+            gr.FillRectangle(Brushes.White, 0, 0, ImgWidth, ImgHeight);
 
-			//Pen gridPen = new Pen(Color.Black);
-			//gridPen.DashStyle = DashStyle.Solid;
+            Pen gridPen = new Pen(Color.Black);
+            gridPen.DashStyle = DashStyle.Solid;
 
-			//for (int gor = 1; gor <= ImgRows; gor++)
-			//{
-			//	gr.DrawLine(gridPen, 0, gor * fieldHeight, ImgWidth, gor * fieldHeight);
-			//	gr.DrawString(rows[gor - 1], new Font("Arial", 10), Brushes.Black,
-			//		new RectangleF(5, gor * fieldHeight - 20, fieldWidth, 20));
-			//}
+            for (int gor = 1; gor <= ImgRows; gor++)
+            {
+                gr.DrawLine(gridPen, 0, gor * fieldHeight, ImgWidth, gor * fieldHeight);
+                gr.DrawString(rows[gor - 1], new Font("Arial", 10), Brushes.Black,
+                    new RectangleF(5, gor * fieldHeight - 20, fieldWidth, 20));
+            }
 
-			//gridPen.Width = 2;
-			//gr.DrawLine(gridPen, fieldWidth, 0, fieldWidth, ImgHeight);
-			//gridPen.Width = 1;
+            gridPen.Width = 2;
+            gr.DrawLine(gridPen, fieldWidth, 0, fieldWidth, ImgHeight);
+            gridPen.Width = 1;
 
-			//gridPen.DashStyle = DashStyle.Dash;
-			//for (int ver = 2; ver <= ImgColumns; ver++)
-			//	gr.DrawLine(gridPen, ver * fieldWidth, 0, ver * fieldWidth, ImgHeight);
+            gridPen.DashStyle = DashStyle.Dash;
+            for (int ver = 2; ver <= ImgColumns; ver++)
+                gr.DrawLine(gridPen, ver * fieldWidth, 0, ver * fieldWidth, ImgHeight);
 
-			//gridPen.Color = Color.Red;
-			//gridPen.Width = 2;
-			//gridPen.DashStyle = DashStyle.Solid;
+            gridPen.Color = Color.Red;
+            gridPen.Width = 2;
+            gridPen.DashStyle = DashStyle.Solid;
 
-			//for (int rw = 0; rw < ImgRows; rw++)
-			//{
-			//	List<Point> sigLv = new List<Point>();
-			//	for (int st = 0; st < ImgColumns - 1; st++)
-			//	{
-			//		sigLv.Add(new Point((st + 1) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
-			//		sigLv.Add(new Point((st + 2) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
-			//	}
+            for (int rw = 0; rw < ImgRows; rw++)
+            {
+                List<Point> sigLv = new List<Point>();
+                for (int st = 0; st < ImgColumns - 1; st++)
+                {
+                    sigLv.Add(new Point((st + 1) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
+                    sigLv.Add(new Point((st + 2) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
+                }
 
-			//	gr.DrawLines(gridPen, sigLv.ToArray());
-			//}
-			//gr.Dispose();
+                gr.DrawLines(gridPen, sigLv.ToArray());
+            }
+            gr.Dispose();
 
-			return null;
-		}
+            return null;
+		}*/
 
 		public void WriteTable(Stream stream, ElementValue[,] table)
 		{

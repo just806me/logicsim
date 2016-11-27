@@ -78,7 +78,7 @@ namespace LogicSimulator.WindowsUI
             pictureBox.Image = scheme.Draw(mainPen);
         }
 
-        private void ShowError(string message, Exception exception)
+        private static void ShowError(string message, Exception exception)
         {
             MessageBox.Show(
                 $"Error: {message}{Environment.NewLine}{(exception == null ? "" : exception.Message)}",

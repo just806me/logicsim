@@ -1,56 +1,41 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace LogicSimulator.Main
 {
+
+    [Serializable]
     public class SchemeException : Exception
     {
-        public string InputName { get; }
+        public string InputName { get; set; }
 
-        public SchemeException(string inputName)
-        {
-            InputName = inputName;
-        }
-
-        public SchemeException(string message, Exception innerException) : base(message, innerException) { }
-
-        public SchemeException(string inputName, string message) : base(message)
-        {
-            InputName = inputName;
-        }
-
-        public SchemeException(string inputName, string message, Exception innerException) : base(message, innerException)
-        {
-            InputName = inputName;
-        }
+        public SchemeException() { }
+        public SchemeException(string message) : base(message) { }
+        public SchemeException(string message, Exception inner) : base(message, inner) { }
+        protected SchemeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 
+
+    [Serializable]
     public class InputNotFoundException : SchemeException
     {
-        public InputNotFoundException(string inputName) : base(inputName) { }
-
-        public InputNotFoundException(string message, Exception innerException) 
-            : base(message, innerException) { }
-
-        public InputNotFoundException(string inputName, string message) 
-            : base(inputName, message) { }
-
-        public InputNotFoundException(string inputName, string message, Exception innerException) 
-            : base(inputName, message, innerException) { }
+        public InputNotFoundException() { }
+        public InputNotFoundException(string message) : base(message) { }
+        public InputNotFoundException(string message, Exception inner) : base(message, inner) { }
+        protected InputNotFoundException(
+          SerializationInfo info,
+          StreamingContext context) : base(info, context) { }
     }
-    
+
+
+    [Serializable]
     public class InputHasNoValueException : SchemeException
     {
-        public InputHasNoValueException(string inputName) : base(inputName) { }
-
-        public InputHasNoValueException(string message, Exception innerException) 
-            : base(message, innerException) { }
-
-        public InputHasNoValueException(string inputName, string message) 
-            : base(inputName, message) { }
-
-        public InputHasNoValueException(string inputName, string message, Exception innerException) 
-            : base(inputName, message, innerException) { }
+        public InputHasNoValueException() { }
+        public InputHasNoValueException(string message) : base(message) { }
+        public InputHasNoValueException(string message, Exception inner) : base(message, inner) { }
+        protected InputHasNoValueException(
+          SerializationInfo info,
+          StreamingContext context) : base(info, context) { }
     }
-
-
 }

@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace LogicSimulator.WindowsUI
 {
@@ -34,7 +33,7 @@ namespace LogicSimulator.WindowsUI
             #endregion
 
             using (var streamReader = new StreamReader(stream))
-                return DrawableSchemeStorage.Load(streamReader.ReadToEnd());
+                return Load(streamReader.ReadToEnd());
         }
 
 		public static string Save(DrawableScheme scheme)

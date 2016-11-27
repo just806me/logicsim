@@ -179,6 +179,7 @@
             this.ClientSize = new System.Drawing.Size(735, 179);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.diagramBox);
+            this.Icon = global::LogicSimulator.WindowsUI.Properties.Resources.component1;
             this.Name = "TimeDiagramDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TimeDiagramDialog";
