@@ -249,7 +249,7 @@ namespace LogicSimulator.Main
 		const int fieldStepWidth = 15;
 		const int fieldHeight = 30;
 
-		public Bitmap DrawTimeDiagram(uint[] InputDelays, uint TimeLimit)
+		public Bitmap DrawTimeDiagram(uint[,] InputDelays, uint TimeLimit)
 		{
 			var rows = _inputs.Select(x => x.Name).Concat(_outputs.Select(x => x.Name)).ToArray();
 
@@ -296,7 +296,7 @@ namespace LogicSimulator.Main
 			while (CurrentTick < TimeLimit)
 			{
 				for (int i = 0; i < _inputs.Count; i++)
-					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i])
+					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i, Convert.ToInt16(state[i].Value.Value)])
 					{
 						LastInputChangeTick[i] = CurrentTick;
 						state[i].Value = !state[i].Value;
