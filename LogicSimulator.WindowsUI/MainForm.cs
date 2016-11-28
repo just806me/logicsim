@@ -13,11 +13,14 @@ namespace LogicSimulator.WindowsUI
         private string filename;
 
         private Pen mainPen;
+
         private DrawableScheme scheme;
 
         private IMoveableElement dragElement;
         private Line connectLine;
         private IMoveableElement menuElement;
+        private bool move;
+        private Point moveLastLocation;
 
         private bool modified;
 
@@ -34,13 +37,14 @@ namespace LogicSimulator.WindowsUI
             LoadScheme(path);
         }
 
-        public void LoadScheme(string path)
+        private void LoadScheme(string path)
         {
             filename = path;
             modified = false;
             dragElement = null;
             connectLine = null;
             menuElement = null;
+            move = false;
 
             if (string.IsNullOrEmpty(path))
             {
@@ -62,21 +66,24 @@ namespace LogicSimulator.WindowsUI
                 }
             }
 
-            pictureBox.Image = scheme.Draw(mainPen);
+            DrawScheme();
         }
 
-        public void LoadScheme(Scheme source)
+        private void LoadScheme(Scheme source)
         {
             filename = null;
             modified = false;
             dragElement = null;
             connectLine = null;
             menuElement = null;
+            move = false;
 
             scheme = DrawableScheme.FromScheme(source, pictureBox.Width, pictureBox.Height);
 
-            pictureBox.Image = scheme.Draw(mainPen);
+            DrawScheme();
         }
+
+        private void DrawScheme() => pictureBox.Image = scheme.Draw(mainPen);
 
         private static void ShowError(string message, Exception exception)
         {
@@ -189,14 +196,20 @@ namespace LogicSimulator.WindowsUI
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && ModifierKeys == Keys.Control)
+            {
+                move = true;
+                moveLastLocation = e.Location;
+                pictureBox.Cursor = Cursors.NoMove2D;
+            }
+            else if (e.Button == MouseButtons.Left)
             {
                 if (dragElement != null)
                 {
                     var overflowElements = scheme.GetElementsAtRectangle(
-                        dragElement.X, 
-                        dragElement.Y, 
-                        dragElement.Width, 
+                        dragElement.X,
+                        dragElement.Y,
+                        dragElement.Width,
                         dragElement.Height
                     );
                     if (overflowElements.Count() == 0 || (overflowElements.Count() == 1 && overflowElements.Contains(dragElement)))
@@ -230,7 +243,7 @@ namespace LogicSimulator.WindowsUI
                         if (add)
                         {
                             scheme.AddElement(connectLine);
-                            pictureBox.Image = scheme.Draw(mainPen);
+                            DrawScheme();
                             connectLine = null;
                         }
                     }
@@ -253,14 +266,14 @@ namespace LogicSimulator.WindowsUI
                     {
                         modified = true;
                         scheme.RemoveElement(toDelete);
-                        pictureBox.Image = scheme.Draw(mainPen);
+                        DrawScheme();
                     }
                 }
             }
             else if (e.Button == MouseButtons.Right)
             {
                 if (connectLine != null)
-                    pictureBox.Image = scheme.Draw(mainPen);
+                    DrawScheme();
 
                 dragElement = null;
                 connectLine = null;
@@ -270,9 +283,21 @@ namespace LogicSimulator.WindowsUI
             }
         }
 
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            move = false;
+            pictureBox.Cursor = Cursors.Default;
+        }
+
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (dragElement != null)
+            if (move)
+            {
+                scheme.Move(e.X - moveLastLocation.X, e.Y - moveLastLocation.Y);
+                DrawScheme();
+                moveLastLocation = e.Location;
+            }
+            else if (dragElement != null)
             {
                 if (!scheme.Elements.Contains(dragElement))
                     scheme.AddElement(dragElement);
@@ -282,7 +307,7 @@ namespace LogicSimulator.WindowsUI
                     dragElement.Y = e.Y;
                 }
 
-                pictureBox.Image = scheme.Draw(mainPen);
+                DrawScheme();
             }
             else if (connectLine != null)
             {
@@ -363,7 +388,7 @@ namespace LogicSimulator.WindowsUI
             modified = true;
 
             scheme.RemoveElement(menuElement);
-            pictureBox.Image = scheme.Draw(mainPen);
+            DrawScheme();
             menuElement = null;
         }
 
@@ -372,7 +397,7 @@ namespace LogicSimulator.WindowsUI
             modified = true;
 
             scheme.Clear();
-            pictureBox.Image = scheme.Draw(mainPen);
+            DrawScheme();
         }
 
         private void tableOfValuesElementMenuStripItem_Click(object sender, EventArgs e)
@@ -416,7 +441,7 @@ namespace LogicSimulator.WindowsUI
         private void pictureBox_SizeChanged(object sender, EventArgs e)
         {
             scheme.SetSize(pictureBox.Width, pictureBox.Height);
-            pictureBox.Image = scheme.Draw(mainPen);
+            DrawScheme();
         }
 
         private void printToolStripMenuItem_Click(object sender, EventArgs e)
@@ -444,7 +469,7 @@ namespace LogicSimulator.WindowsUI
                     }
                     menuElement.Name = dialog.NewName;
 
-                    pictureBox.Image = scheme.Draw(mainPen);
+                    DrawScheme();
                     menuElement = null;
                 }
         }
@@ -469,21 +494,21 @@ namespace LogicSimulator.WindowsUI
             menuElement = null;
         }
 
-		private void timeDiagramToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			try
-			{
+        private void timeDiagramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
                 if (scheme.Inputs.Any())
-				    using (var form = new TimeDiagramDialog(scheme.Scheme))
-					    form.ShowDialog();
+                    using (var form = new TimeDiagramDialog(scheme.Scheme))
+                        form.ShowDialog();
                 else
                     ShowError("Nothing to show", null);
             }
-			catch (SchemeException exception)
-			{
-				ShowError($"Scheme is invalid!", exception);
-			}
-		}
+            catch (SchemeException exception)
+            {
+                ShowError($"Scheme is invalid!", exception);
+            }
+        }
 
         private void fromEquationToolStripMenuItem_Click(object sender, EventArgs e)
         {

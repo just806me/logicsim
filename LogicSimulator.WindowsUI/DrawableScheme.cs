@@ -151,6 +151,16 @@ namespace LogicSimulator.WindowsUI
             _graphics = Graphics.FromImage(_bitmap);
         }
 
+        public void Move(int dx, int dy)
+        {
+            foreach (var item in _elements)
+                if (item is IMoveableElement)
+                {
+                    ((IMoveableElement)item).X += dx;
+                    ((IMoveableElement)item).Y += dy;
+                }
+        }
+
         public void Draw(Graphics graphics, Pen pen, bool clear = false, Color? fillColor = null)
         {
             if (clear)
