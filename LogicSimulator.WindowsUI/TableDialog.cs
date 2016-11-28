@@ -61,12 +61,12 @@ namespace LogicSimulator.WindowsUI
         {
             ClientSize = new Size(
                 Math.Min(
-                    5 + dataGridView.Columns.Cast<DataGridViewColumn>().Sum(c => c.Width),
-                    Screen.PrimaryScreen.WorkingArea.Width
+                    2 + SystemInformation.SizingBorderWidth + SystemInformation.VerticalScrollBarWidth + dataGridView.Columns.Cast<DataGridViewColumn>().Sum(c => c.Width),
+                    Screen.PrimaryScreen.WorkingArea.Width - SystemInformation.SizingBorderWidth - SystemInformation.VerticalScrollBarWidth - 2
                 ),
                 Math.Min(
-                    5 + dataGridView.ColumnHeadersHeight + dataGridView.Rows.Cast<DataGridViewRow>().Sum(r => r.Height),
-                    Screen.PrimaryScreen.WorkingArea.Height
+                    2 + SystemInformation.SizingBorderWidth + SystemInformation.VerticalScrollBarWidth + dataGridView.ColumnHeadersHeight + dataGridView.Rows.Cast<DataGridViewRow>().Sum(r => r.Height),
+                    Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.CaptionHeight - SystemInformation.HorizontalScrollBarHeight - 2
                 )
             );
         }
