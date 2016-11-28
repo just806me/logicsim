@@ -299,7 +299,6 @@ namespace LogicSimulator.Main
 			for (uint CurrentTick = 0; CurrentTick < TimeLimit; CurrentTick++)
 			{
 				for (int i = 0; i < _inputs.Count; i++)
-				{
 					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i, state[i].Value.Value ? 1 : 0])
 					{
 						LastInputChangeTick[i] = CurrentTick;

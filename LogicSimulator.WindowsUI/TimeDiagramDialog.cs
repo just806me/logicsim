@@ -43,6 +43,17 @@ namespace LogicSimulator.WindowsUI
                     Screen.PrimaryScreen.WorkingArea.Height
                 )
             );
+
+            ClientSize = new Size(
+                Math.Min(
+                    2 + SystemInformation.SizingBorderWidth + SystemInformation.VerticalScrollBarWidth + panel1.Width + diagramBox.Image.Width,
+                    Screen.PrimaryScreen.WorkingArea.Width - SystemInformation.SizingBorderWidth - SystemInformation.VerticalScrollBarWidth - 2
+                ),
+                Math.Min(
+                    2 + SystemInformation.SizingBorderWidth + SystemInformation.VerticalScrollBarWidth + Math.Max(diagramBox.Image.Height, 152),
+                    Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.CaptionHeight - SystemInformation.HorizontalScrollBarHeight - 2
+                )
+            );
         }
 
         private void state0ChangeTimeNum_ValueChanged(object sender, EventArgs e)
