@@ -106,6 +106,16 @@
     <Compile Include="EquationDialog.Designer.cs">
       <DependentUpon>EquationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Localization.ru.Designer.cs">
+      <DependentUpon>Localization.ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Localization.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -132,6 +142,16 @@
     <Compile Include="TimeDiagramDialog.Designer.cs">
       <DependentUpon>TimeDiagramDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Resources\Localization.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.ru.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resource</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resource</CustomToolNamespace>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

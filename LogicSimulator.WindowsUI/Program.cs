@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace LogicSimulator.WindowsUI
@@ -13,7 +15,13 @@ namespace LogicSimulator.WindowsUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
+
+			//ThreadLocalization
+			var ci = new CultureInfo("ru");
+			Thread.CurrentThread.CurrentUICulture = ci;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
+
+			Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
         }
     }
 }

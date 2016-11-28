@@ -28,11 +28,11 @@ namespace LogicSimulator.Main
 		private List<Component> _components;
 
 		[JsonIgnore]
-        public ReadOnlyCollection<Component>[] ComponentLayers 
-            => _componentLayers.Select(x => new ReadOnlyCollection<Component>(x)).ToArray();
-        private List<List<Component>> _componentLayers;
+		public ReadOnlyCollection<Component>[] ComponentLayers
+			=> _componentLayers.Select(x => new ReadOnlyCollection<Component>(x)).ToArray();
+		private List<List<Component>> _componentLayers;
 
-        public Scheme(IEnumerable<Input> inputs, IEnumerable<Output> outputs, IEnumerable<Component> components)
+		public Scheme(IEnumerable<Input> inputs, IEnumerable<Output> outputs, IEnumerable<Component> components)
 		{
 			_inputs = inputs.ToList();
 			_outputs = outputs.ToList();
@@ -63,94 +63,94 @@ namespace LogicSimulator.Main
 			#endregion
 		}
 
-        private static List<string> baseFuncs = new List<string> { "(", "!", "*", "+", ")" };
+		private static List<string> baseFuncs = new List<string> { "(", "!", "*", "+", ")" };
 
-        public static Scheme FromEquation(string equation)
-        {
-            var inputs = new List<Input>();
-            var components = new List<Component>();
+		public static Scheme FromEquation(string equation)
+		{
+			var inputs = new List<Input>();
+			var components = new List<Component>();
 
-            foreach (var baseFunc in baseFuncs)
-                equation = equation.Replace(baseFunc, $" {baseFunc} ");
+			foreach (var baseFunc in baseFuncs)
+				equation = equation.Replace(baseFunc, $" {baseFunc} ");
 
-            equation = $"( {equation} )";
+			equation = $"( {equation} )";
 
-            var operands = new Stack<string>();
-            var functions = new Stack<string>();
+			var operands = new Stack<string>();
+			var functions = new Stack<string>();
 
-            Action calc = () =>
-            {
-                string op1, op2;
-                Component component;
+			Action calc = () =>
+			{
+				string op1, op2;
+				Component component;
 
-                switch (functions.Pop())
-                {
-                    case "!":
-                        op1 = operands.Pop();
+				switch (functions.Pop())
+				{
+					case "!":
+						op1 = operands.Pop();
 
-                        component = new Component($"c{components.Count}", ComponentType.Not, new[] { op1 });
-                        components.Add(component);
+						component = new Component($"c{components.Count}", ComponentType.Not, new[] { op1 });
+						components.Add(component);
 
-                        operands.Push(component.Name);
-                        break;
-                    case "+":
-                        op1 = operands.Pop();
-                        op2 = operands.Pop();
+						operands.Push(component.Name);
+						break;
+					case "+":
+						op1 = operands.Pop();
+						op2 = operands.Pop();
 
-                        component = new Component($"c{components.Count}", ComponentType.Or, new[] { op2, op1 });
-                        components.Add(component);
+						component = new Component($"c{components.Count}", ComponentType.Or, new[] { op2, op1 });
+						components.Add(component);
 
-                        operands.Push(component.Name);
-                        break;
-                    case "*":
-                        op1 = operands.Pop();
-                        op2 = operands.Pop();
+						operands.Push(component.Name);
+						break;
+					case "*":
+						op1 = operands.Pop();
+						op2 = operands.Pop();
 
-                        component = new Component($"c{components.Count}", ComponentType.And, new[] { op2, op1 });
-                        components.Add(component);
+						component = new Component($"c{components.Count}", ComponentType.And, new[] { op2, op1 });
+						components.Add(component);
 
-                        operands.Push(component.Name);
-                        break;
-                    default:
-                        break;
-                }
-            };
+						operands.Push(component.Name);
+						break;
+					default:
+						break;
+				}
+			};
 
-            foreach (var item in equation.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                // if item is function
-                if (baseFuncs.Contains(item))
-                {
-                    if (item == ")")
-                    {
-                        while (functions.Count > 0 && functions.Peek() != "(")
-                            calc();
-                        functions.Pop();
-                    }
-                    // if we can calculate previous
-                    else if (functions.Count != 0 && item != "(" && functions.Peek() != "(" && baseFuncs.IndexOf(item) >= baseFuncs.IndexOf(functions.Peek()))
-                    {
-                        calc();
-                        functions.Push(item);
-                    }
-                    else
-                        functions.Push(item);
-                }
-                // if item is operator
-                else
-                {
-                    if (!inputs.Any(x => x.Name == item))
-                        inputs.Add(new Input(item));
+			foreach (var item in equation.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				// if item is function
+				if (baseFuncs.Contains(item))
+				{
+					if (item == ")")
+					{
+						while (functions.Count > 0 && functions.Peek() != "(")
+							calc();
+						functions.Pop();
+					}
+					// if we can calculate previous
+					else if (functions.Count != 0 && item != "(" && functions.Peek() != "(" && baseFuncs.IndexOf(item) >= baseFuncs.IndexOf(functions.Peek()))
+					{
+						calc();
+						functions.Push(item);
+					}
+					else
+						functions.Push(item);
+				}
+				// if item is operator
+				else
+				{
+					if (!inputs.Any(x => x.Name == item))
+						inputs.Add(new Input(item));
 
-                    operands.Push(item);
-                }
-            }
+					operands.Push(item);
+				}
+			}
 
-            var outputs = new[] { new Output("y", operands.Pop()) };
-            return new Scheme(inputs, outputs, components);
-        }
+			var outputs = new[] { new Output("y", operands.Pop()) };
+			return new Scheme(inputs, outputs, components);
+		}
 
-        public void SetCurrentState(IEnumerable<ElementValue> state)
+		public void SetCurrentState(IEnumerable<ElementValue> state)
 		{
 			#region arguments check
 
@@ -287,41 +287,88 @@ namespace LogicSimulator.Main
 			gridPen.Width = 2;
 			gridPen.DashStyle = DashStyle.Solid;
 
-			uint CurrentTick = 0, CurrentColumn = 0;
+			
 			uint[] LastInputChangeTick = new uint[_inputs.Count];
 			ElementValue[] state = new ElementValue[_inputs.Count];
 			for (int i = 0; i < _inputs.Count; i++)
 				state[i] = new ElementValue() { Delay = 0, Value = false };
 
-			while (CurrentTick < TimeLimit)
+			bool[,] inputValues = new bool[_inputs.Count, TimeLimit];
+			ElementValue[,] outputValue = new ElementValue[_outputs.Count, TimeLimit];
+
+			for (uint CurrentTick = 0; CurrentTick < TimeLimit; CurrentTick++)
 			{
 				for (int i = 0; i < _inputs.Count; i++)
-					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i, Convert.ToInt16(state[i].Value.Value)])
+				{
+					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i, state[i].Value.Value ? 1 : 0])
 					{
 						LastInputChangeTick[i] = CurrentTick;
 						state[i].Value = !state[i].Value;
 					}
 
+					inputValues[i, CurrentTick] = state[i].Value.Value;
+				}
+
 				SetCurrentState(state);
 				CalculateForCurrentState();
 
-				for (int rw = 0; rw < ImgRows; rw++)
+				for (int i = 0; i < _outputs.Count; i++)
+					outputValue[i, CurrentTick] = _outputs[i].Value;				
+			}
+
+			for (int rw = 0; rw < ImgRows; rw++)
+			{
+				List<Point> sigLv = new List<Point>();
+				if (rw < _inputs.Count)
 				{
-					if (rw < _inputs.Count)
-						gr.DrawLine(gridPen,
-							fieldFirstWidth + CurrentColumn * fieldStepWidth, (rw + (state[rw].Value.Value ? .3f : 1f)) * fieldHeight,
-							fieldFirstWidth + (CurrentColumn + 1) * fieldStepWidth, (rw + (state[rw].Value.Value ? .3f : 1f)) * fieldHeight);
-					else
-						gr.DrawLine(gridPen,
-							fieldFirstWidth + CurrentColumn * fieldStepWidth,
-							(rw + (_outputs[rw - _inputs.Count].Value.Value.Value ? .3f : 1f)) * fieldHeight,
-							fieldFirstWidth + (CurrentColumn + 1) * fieldStepWidth,
-							(rw + (_outputs[rw - _inputs.Count].Value.Value.Value ? .3f : 1f)) * fieldHeight);
+					sigLv.Add(new Point(fieldFirstWidth,
+						(int)((rw + (inputValues[rw, 0] ? .3f : 1f)) * fieldHeight)));
+					sigLv.Add(new Point(fieldFirstWidth + fieldStepWidth,
+						(int)((rw + (inputValues[rw, 0] ? .3f : 1f)) * fieldHeight)));
+				}
+				else
+				{
+					sigLv.Add(new Point(fieldFirstWidth,
+						(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
+					sigLv.Add(new Point(fieldFirstWidth + fieldStepWidth,
+						(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
 				}
 
-				CurrentColumn++;
-				CurrentTick += 1;
+				for (int tick = 1; tick < TimeLimit; tick++)
+				{
+					if (rw < _inputs.Count)
+					{
+						sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
+							(int)((rw + (inputValues[rw, tick] ? .3f : 1f)) * fieldHeight)));
+						sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
+							(int)((rw + (inputValues[rw, tick] ? .3f : 1f)) * fieldHeight)));
+					}
+					else
+					{
+						if (outputValue[rw - _inputs.Count, tick - 1].Value.Value ^ outputValue[rw - _inputs.Count, tick].Value.Value)
+						{
+							int dx = (int)(fieldStepWidth * outputValue[rw - _inputs.Count, tick].Delay.Value / (_componentLayers.Count + 1));
+							sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth + dx,
+								(int)((rw + (outputValue[rw - _inputs.Count, tick - 1].Value.Value ? .3f : 1f)) * fieldHeight))); // last
+
+							sigLv.Add(new Point(dx + fieldFirstWidth + tick * fieldStepWidth,
+							(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+							sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
+								(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+						}
+						else
+						{
+							sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
+								(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+							sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
+								(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+						}
+					}
+				}
+
+				gr.DrawLines(gridPen, sigLv.ToArray());
 			}
+
 			gr.Dispose();
 			return bt;
 		}
@@ -418,12 +465,12 @@ namespace LogicSimulator.Main
 					for (int j = 0; j < table_Count[1]; j++)
 						writer.Write($"<td{(j == _inputs.Count ? " class='border-left'" : string.Empty)}>{Convert.ToInt16(table[i, j].Value)}{(j >= _inputs.Count ? "</td><td>" + Convert.ToInt32(table[i, j].Delay).ToString() : string.Empty)}</td>");
 
-                    writer.Write("</tr>");
+					writer.Write("</tr>");
 				}
 				writer.Write("</table></body></html>");
 			}
 		}
 
 		public void CalculateAndWriteTable(Stream stream) => WriteTable(stream, CalculateTable());
-    }
+	}
 }

@@ -104,7 +104,7 @@
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
+			this.fileToolStripMenuItem.Text = Resource.Localization.MainMenuFile;
             // 
             // newToolStripMenuItem
             // 
@@ -410,7 +410,7 @@
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Logic Simulator";
+			this.Text = Resource.Localization.FormName;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
