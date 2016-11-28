@@ -41,7 +41,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(79, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Enter equation:";
+            this.label1.Text = Resource.Localization.EquationDialog_Label;
             // 
             // equationTextBox
             // 
@@ -57,7 +57,7 @@
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(127, 23);
             this.okButton.TabIndex = 2;
-            this.okButton.Text = "OK";
+            this.okButton.Text = Resource.Localization.OK;
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
@@ -68,7 +68,7 @@
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(127, 23);
             this.cancelButton.TabIndex = 3;
-            this.cancelButton.Text = "Cancel";
+            this.cancelButton.Text = Resource.Localization.Cancel;
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
@@ -88,7 +88,7 @@
             this.MaximizeBox = false;
             this.Name = "EquationDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Equation";
+            this.Text = Resource.Localization.EquationDialog_Name;
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -61,7 +61,7 @@
             this.MaximizeBox = false;
             this.Name = "TableForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Table of values";
+            this.Text = Resource.Localization.TableDialog_Name;
             this.Shown += new System.EventHandler(this.TableForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);

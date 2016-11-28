@@ -17,7 +17,7 @@ namespace LogicSimulator.WindowsUI
             Application.SetCompatibleTextRenderingDefault(false);
 
 			//ThreadLocalization
-			var ci = new CultureInfo("ru");
+			var ci = new CultureInfo("uk");
 			Thread.CurrentThread.CurrentUICulture = ci;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
 

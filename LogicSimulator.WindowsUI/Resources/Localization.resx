@@ -117,10 +117,136 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FormName" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="EquationDialog_Label" xml:space="preserve">
+    <value>Enter equation</value>
+  </data>
+  <data name="EquationDialog_Name" xml:space="preserve">
+    <value>Equation</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Error_EmptyScheme" xml:space="preserve">
+    <value>Nothing to show</value>
+  </data>
+  <data name="Error_HtmlExport" xml:space="preserve">
+    <value>Cannot export to HTML</value>
+  </data>
+  <data name="Error_InvalidScheme" xml:space="preserve">
+    <value>Scheme is invalid!</value>
+  </data>
+  <data name="Error_PathOpen" xml:space="preserve">
+    <value>Cannot open file {0}!</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MainForm_ExportFileDialog_Filter" xml:space="preserve">
+    <value>HTML files|*.html</value>
+  </data>
+  <data name="MainForm_FileDialog_Filter" xml:space="preserve">
+    <value>Scheme files|*.jsch</value>
+  </data>
+  <data name="MainForm_Name" xml:space="preserve">
     <value>Logic Simulator</value>
   </data>
-  <data name="MainMenuFile" xml:space="preserve">
+  <data name="MainForm_SaveMessage" xml:space="preserve">
+    <value>Do you want to save the current project?</value>
+  </data>
+  <data name="MainForm_ToolStrip_AddButtonPrompt" xml:space="preserve">
+    <value>Add elements</value>
+  </data>
+  <data name="MainForm_ToolStrip_ConnectButtonPrompt" xml:space="preserve">
+    <value>Connect elements</value>
+  </data>
+  <data name="MainForm_ToolStrip_DeleteButtonPrompt" xml:space="preserve">
+    <value>Delete elements</value>
+  </data>
+  <data name="MainForm_ToolStrip_MoveButtonPrompt" xml:space="preserve">
+    <value>Move elements</value>
+  </data>
+  <data name="Menu_Context_Element_Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Menu_Context_Element_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Menu_Context_Element_Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="Menu_Context_Element_Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="Menu_Context_Scheme_ClearAll" xml:space="preserve">
+    <value>Clear all</value>
+  </data>
+  <data name="Menu_Main_File" xml:space="preserve">
     <value>File</value>
+  </data>
+  <data name="Menu_Main_File_Export" xml:space="preserve">
+    <value>Export as HTML</value>
+  </data>
+  <data name="Menu_Main_File_New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Menu_Main_File_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Menu_Main_File_Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Menu_Main_File_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Menu_Main_File_SaveAs" xml:space="preserve">
+    <value>Save as</value>
+  </data>
+  <data name="Menu_Main_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Menu_Main_Help_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Menu_Main_Tools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Menu_Main_Tools_FromEquation" xml:space="preserve">
+    <value>From equation</value>
+  </data>
+  <data name="Menu_Main_Tools_GetTimeDiagram" xml:space="preserve">
+    <value>Time diagram</value>
+  </data>
+  <data name="Menu_Main_Tools_GetValuesTable" xml:space="preserve">
+    <value>Table of values</value>
+  </data>
+  <data name="NameDialog_Label" xml:space="preserve">
+    <value>Enter new name</value>
+  </data>
+  <data name="NameDialog_Name" xml:space="preserve">
+    <value>Change name</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="TableDialog_Name" xml:space="preserve">
+    <value>Table of values</value>
+  </data>
+  <data name="TimeDiagramDialog_GroupBoxInputs" xml:space="preserve">
+    <value>Input settings</value>
+  </data>
+  <data name="TimeDiagramDialog_LabelTime" xml:space="preserve">
+    <value>Simulation time</value>
+  </data>
+  <data name="TimeDiagramDialog_Label_State0ChangeTime" xml:space="preserve">
+    <value>State 0 change time</value>
+  </data>
+  <data name="TimeDiagramDialog_Label_State1ChangeTime" xml:space="preserve">
+    <value>State 1 change time</value>
+  </data>
+  <data name="TimeDiagramDialog_Name" xml:space="preserve">
+    <value>Time diagram</value>
   </data>
 </root>
