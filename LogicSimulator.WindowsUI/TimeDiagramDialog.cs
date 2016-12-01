@@ -30,28 +30,20 @@ namespace LogicSimulator.WindowsUI
 
         private void runButton_Click(object sender, EventArgs e)
         {
+            const int magic = 3;
+
             diagramBox.Image = scheme.DrawTimeDiagram(stateChangeTimes, (uint)simulationTimeNum.Value);
+
             diagramBox.Size = diagramBox.Image.Size;
-
-            ClientSize = new Size(
-                 Math.Min(
-                    panel1.Width + diagramBox.Image.Width + 20,
-                    Screen.PrimaryScreen.WorkingArea.Width
-                ),
-                Math.Min(
-                    Math.Max(diagramBox.Image.Height, 152) + 40,
-                    Screen.PrimaryScreen.WorkingArea.Height
-                )
+            panel2.Width = Math.Min(
+                diagramBox.Width + magic,
+                Screen.PrimaryScreen.WorkingArea.Width - SystemInformation.SizingBorderWidth - SystemInformation.VerticalScrollBarWidth - magic - panel1.Width
             );
-
             ClientSize = new Size(
+                panel1.Width + panel2.Width,
                 Math.Min(
-                    2 + SystemInformation.SizingBorderWidth + SystemInformation.VerticalScrollBarWidth + panel1.Width + diagramBox.Image.Width,
-                    Screen.PrimaryScreen.WorkingArea.Width - SystemInformation.SizingBorderWidth - SystemInformation.VerticalScrollBarWidth - 2
-                ),
-                Math.Min(
-                    2 + SystemInformation.SizingBorderWidth + SystemInformation.VerticalScrollBarWidth + Math.Max(diagramBox.Image.Height, 152),
-                    Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.CaptionHeight - SystemInformation.HorizontalScrollBarHeight - 2
+                    Math.Max(diagramBox.Height, 177) + magic,
+                    Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.CaptionHeight - SystemInformation.HorizontalScrollBarHeight - magic
                 )
             );
         }
