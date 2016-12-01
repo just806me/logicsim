@@ -49,7 +49,8 @@ namespace LogicSimulator.WindowsUI
 			if (string.IsNullOrEmpty(path))
 			{
 				scheme = new DrawableScheme(pictureBox.Width, pictureBox.Height);
-			}
+                filename = null;
+            }
 			else
 			{
 				try
@@ -138,7 +139,7 @@ namespace LogicSimulator.WindowsUI
 
 		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (filename != null)
+			if (!string.IsNullOrEmpty(filename))
 			{
 				using (var file = File.Open(filename, FileMode.Create))
 					DrawableSchemeStorage.Save(scheme, file);

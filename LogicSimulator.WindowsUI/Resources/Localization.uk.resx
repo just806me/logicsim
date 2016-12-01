@@ -124,37 +124,37 @@
     <value>Вкажіть логічну функцію</value>
   </data>
   <data name="EquationDialog_Name" xml:space="preserve">
-    <value>Equation</value>
+    <value>Логічна функція</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Помилка</value>
   </data>
   <data name="Error_EmptyScheme" xml:space="preserve">
-    <value>Nothing to show</value>
+    <value>Схема порожня!</value>
   </data>
   <data name="Error_HtmlExport" xml:space="preserve">
-    <value>Cannot export to HTML</value>
+    <value>Не можу експортувати як HTML!</value>
   </data>
   <data name="Error_InvalidScheme" xml:space="preserve">
-    <value>Scheme is invalid!</value>
+    <value>Схема не вірна!</value>
   </data>
   <data name="Error_PathOpen" xml:space="preserve">
-    <value>Cannot open file {0}!</value>
+    <value>Не можу відкрити файл {0}!</value>
   </data>
   <data name="Exit" xml:space="preserve">
     <value>Вихід</value>
   </data>
   <data name="MainForm_ExportFileDialog_Filter" xml:space="preserve">
-    <value>HTML files|*.html</value>
+    <value>Файли HTML|*.html</value>
   </data>
   <data name="MainForm_FileDialog_Filter" xml:space="preserve">
-    <value>Scheme files|*.jsch</value>
+    <value>Файли схеми|*.jsch</value>
   </data>
   <data name="MainForm_Name" xml:space="preserve">
     <value>Logic Simulator</value>
   </data>
   <data name="MainForm_SaveMessage" xml:space="preserve">
-    <value>Do you want to save the current project?</value>
+    <value>Зберегти поточний проект?</value>
   </data>
   <data name="MainForm_ToolStrip_AddButtonPrompt" xml:space="preserve">
     <value>Додати елементи</value>
