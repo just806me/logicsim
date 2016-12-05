@@ -232,16 +232,16 @@
     <value>Таблиця істинності</value>
   </data>
   <data name="TimeDiagramDialog_GroupBoxInputs" xml:space="preserve">
-    <value>Налаштування входів</value>
+    <value>Input settings</value>
   </data>
   <data name="TimeDiagramDialog_LabelTime" xml:space="preserve">
     <value>Час симуляції</value>
   </data>
   <data name="TimeDiagramDialog_Label_State0ChangeTime" xml:space="preserve">
-    <value>Час зміни стану 0</value>
+    <value>State 0 change time</value>
   </data>
   <data name="TimeDiagramDialog_Label_State1ChangeTime" xml:space="preserve">
-    <value>Час зміни стану 1</value>
+    <value>State 1 change time</value>
   </data>
   <data name="TimeDiagramDialog_Name" xml:space="preserve">
     <value>Часова діаграма</value>

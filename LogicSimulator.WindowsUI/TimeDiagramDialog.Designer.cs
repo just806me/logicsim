@@ -67,7 +67,7 @@
             this.runButton.Name = "runButton";
             this.runButton.Size = new System.Drawing.Size(178, 23);
             this.runButton.TabIndex = 13;
-            this.runButton.Text = Resource.Localization.OK;
+            this.runButton.Text = global::Resource.Localization.OK;
             this.runButton.UseVisualStyleBackColor = true;
             this.runButton.Click += new System.EventHandler(this.runButton_Click);
             // 
@@ -78,7 +78,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 13);
             this.label2.TabIndex = 12;
-            this.label2.Text = Resource.Localization.TimeDiagramDialog_LabelTime;
+            this.label2.Text = "Simulation time";
             // 
             // simulationTimeNum
             // 
@@ -109,7 +109,7 @@
             this.groupBox1.Size = new System.Drawing.Size(178, 100);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = Resource.Localization.TimeDiagramDialog_GroupBoxInputs;
+            this.groupBox1.Text = "Input settings";
             // 
             // label3
             // 
@@ -118,7 +118,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 13);
             this.label3.TabIndex = 8;
-            this.label3.Text = Resource.Localization.TimeDiagramDialog_Label_State1ChangeTime;
+            this.label3.Text = "State 1 change time";
             // 
             // state1ChangeTimeNum
             // 
@@ -140,11 +140,11 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 6;
-            this.label1.Text = Resource.Localization.TimeDiagramDialog_Label_State0ChangeTime;
-			// 
-			// state0ChangeTimeNum
-			// 
-			this.state0ChangeTimeNum.Location = new System.Drawing.Point(115, 46);
+            this.label1.Text = "State 0 change time";
+            // 
+            // state0ChangeTimeNum
+            // 
+            this.state0ChangeTimeNum.Location = new System.Drawing.Point(115, 46);
             this.state0ChangeTimeNum.Maximum = new decimal(new int[] {
             250,
             0,
@@ -193,8 +193,8 @@
             this.Icon = global::LogicSimulator.WindowsUI.Properties.Resources.component1;
             this.Name = "TimeDiagramDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = Resource.Localization.TimeDiagramDialog_Name;
-			this.panel1.ResumeLayout(false);
+            this.Text = "Time diagram";
+            this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.simulationTimeNum)).EndInit();
             this.groupBox1.ResumeLayout(false);
