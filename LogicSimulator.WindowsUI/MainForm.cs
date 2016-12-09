@@ -236,7 +236,7 @@ namespace LogicSimulator.WindowsUI
 
 						if (connectLine.connection.Item2 is Component)
 							(connectLine.connection.Item2 as Component).AddInput(connectLine.connection.Item1.Name);
-						else if (connectLine.connection.Item2 is Output && (connectLine.connection.Item2 as Output).Input == null)
+						else if (connectLine.connection.Item2 is Output && (connectLine.connection.Item2 as Output).Input == string.Empty)
 							(connectLine.connection.Item2 as Output).Input = connectLine.connection.Item1.Name;
 						else
 							add = false;
@@ -352,7 +352,7 @@ namespace LogicSimulator.WindowsUI
 
 						dragElement = new DrawableOutput(
 							$"y{max_output_number + 1}",
-							null,
+							string.Empty,
 							0, 0,
 							DrawableScheme.ElementWidth,
 							DrawableScheme.ElementHeight

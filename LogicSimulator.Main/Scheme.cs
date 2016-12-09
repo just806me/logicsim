@@ -7,6 +7,10 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 
+#if DEBUG
+using LogicSimulator.Logger;
+#endif
+
 namespace LogicSimulator.Main
 {
     public class Scheme
@@ -40,6 +44,15 @@ namespace LogicSimulator.Main
 
         public Scheme(IEnumerable<Input> inputs, IEnumerable<Output> outputs, IEnumerable<Component> components)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::ctor", Type = typeof(Scheme) },
+                new ArgumentInfo { Name = nameof(inputs), Type = inputs.GetType(), Data = inputs },
+                new ArgumentInfo { Name = nameof(outputs), Type = outputs.GetType(), Data = outputs },
+                new ArgumentInfo { Name = nameof(components), Type = components.GetType(), Data = components }
+            );
+#endif
+
             _inputs = inputs.ToList();
             _outputs = outputs.ToList();
             _components = components.ToList();
@@ -73,6 +86,13 @@ namespace LogicSimulator.Main
 
         public static Scheme FromEquation(string equation)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::FromEquation", Type = typeof(Scheme) },
+                new ArgumentInfo { Name = nameof(equation), Type = equation.GetType(), Data = equation }
+            );
+#endif
+
             var inputs = new List<Input>();
             var components = new List<Component>();
 
@@ -158,6 +178,13 @@ namespace LogicSimulator.Main
 
         public void SetCurrentState(IEnumerable<ElementValue> state)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::SetCurrentState", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(state), Type = state.GetType(), Data = state }
+            );
+#endif
+
             #region arguments check
 
             if (state == null)
@@ -176,6 +203,13 @@ namespace LogicSimulator.Main
 
         public void SetCurrentState(int stateNumber)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::SetCurrentState", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(stateNumber), Type = stateNumber.GetType(), Data = stateNumber }
+            );
+#endif
+
             #region arguments check
 
             if (stateNumber >= Convert.ToInt32(Math.Pow(2, _inputs.Count)) || stateNumber < 0)
@@ -200,6 +234,12 @@ namespace LogicSimulator.Main
 
         public void CalculateForCurrentState()
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::CalculateForCurrentState", Type = typeof(void) }
+            );
+#endif
+
             foreach (var layer in _componentLayers)
                 foreach (var component in layer)
                 {
@@ -216,6 +256,13 @@ namespace LogicSimulator.Main
 
         public ElementValue GetElementValue(string name)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::GetElementValue", Type = typeof(ElementValue) },
+                new ArgumentInfo { Name = nameof(name), Type = name.GetType(), Data = name }
+            );
+#endif
+
             var match = _elements.FirstOrDefault(e => e.Name == name);
 
             if (match == null)
@@ -230,6 +277,12 @@ namespace LogicSimulator.Main
 
         public ElementValue[,] CalculateTable()
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::CalculateTable", Type = typeof(ElementValue[,]) }
+            );
+#endif
+
             var inputs_count_pow2 = Convert.ToInt32(Math.Pow(2, _inputs.Count));
             var inputs_plus_outputs_count = _inputs.Count + _outputs.Count;
             var table = new ElementValue[inputs_count_pow2, inputs_plus_outputs_count];
@@ -257,6 +310,14 @@ namespace LogicSimulator.Main
 
         public Bitmap DrawTimeDiagram(uint[,] InputDelays, uint TimeLimit)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::DrawTimeDiagram", Type = typeof(Bitmap) },
+                new ArgumentInfo { Name = nameof(InputDelays), Type = InputDelays.GetType(), Data = InputDelays },
+                new ArgumentInfo { Name = nameof(TimeLimit), Type = InputDelays.GetType(), Data = TimeLimit }
+            );
+#endif
+
             var rows = _inputs.Select(x => x.Name).Concat(_outputs.Select(x => x.Name)).ToArray();
 
             int ImgRows = _inputs.Count + _outputs.Count;
@@ -433,6 +494,14 @@ namespace LogicSimulator.Main
 
         public void WriteTable(Stream stream, ElementValue[,] table)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::WriteTable", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(stream), Type = stream.GetType(), Data = new { stream.CanRead, stream.CanSeek, stream.CanWrite, stream.Length, stream.Position } },
+                new ArgumentInfo { Name = nameof(table), Type = table.GetType(), Data = table }
+            );
+#endif
+
             #region arguments check
 
             if (stream == null)
@@ -477,6 +546,16 @@ namespace LogicSimulator.Main
             }
         }
 
-        public void CalculateAndWriteTable(Stream stream) => WriteTable(stream, CalculateTable());
+        public void CalculateAndWriteTable(Stream stream)
+        {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Scheme::CalculateAndWriteTable", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(stream), Type = stream.GetType(), Data = new { stream.CanRead, stream.CanSeek, stream.CanWrite, stream.Length, stream.Position } }
+            );
+#endif
+
+            WriteTable(stream, CalculateTable());
+        }
     }
 }
