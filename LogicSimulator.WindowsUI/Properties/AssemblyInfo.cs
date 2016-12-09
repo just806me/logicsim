@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Logic Simulator")]
-[assembly: AssemblyCopyright("Copyright ©  2016 Leonid Kuznetsov @just806me")]
+[assembly: AssemblyCopyright("Copyright © 2016 Leonid Kuznetsov @just806me, Kostiantyn Kostiuk @kostyanf14")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
