@@ -27,6 +27,8 @@ namespace LogicSimulator.Logger
     public static class Log
     {
         private static bool started;
+        private static StreamWriter ErrorFile;
+        private static StreamWriter MethodFile;
 
         public static string ErrorLogFile => $"{Environment.MachineName}.{Environment.UserName}.errors.log";
         public static string MethodLogFile => $"{Environment.MachineName}.{Environment.UserName}.methods.log";
@@ -36,30 +38,36 @@ namespace LogicSimulator.Logger
         public static void Start()
         {
             AppDomain.CurrentDomain.FirstChanceException += Error;
+            ErrorFile = new StreamWriter(ErrorLogFile, true) { AutoFlush = false };
+            MethodFile = new StreamWriter(MethodLogFile, true) { AutoFlush = false };
             started = true;
         }
 
         public static void Stop()
         {
             started = false;
+            ErrorFile.Dispose();
+            MethodFile.Dispose();
             AppDomain.CurrentDomain.FirstChanceException -= Error;
+        }
+
+        public static void Flush()
+        {
+            ErrorFile.Flush();
+            MethodFile.Flush();
         }
         
         private static void Error(object sender, FirstChanceExceptionEventArgs e)
         {
             if (started)
             {
-                var builder = new StringBuilder();
-
-                builder.AppendLine($"UTC time: {DateTime.UtcNow.ToString()}");
-                builder.AppendLine($"Error: {e.Exception.Message}");
-                builder.AppendLine($"Short stack: {e.Exception.StackTrace}");
-                builder.AppendLine("Full stack:");
+                ErrorFile.WriteLine($"UTC time: {DateTime.UtcNow.ToString()}");
+                ErrorFile.WriteLine($"Error: {e.Exception.Message}");
+                ErrorFile.WriteLine($"Short stack: {e.Exception.StackTrace}");
+                ErrorFile.WriteLine("Full stack:");
                 foreach (var frame in new StackTrace(true).GetFrames())
-                    builder.Append(frame.ToString());
-                builder.AppendLine("//-------------------------------------------//");
-
-                File.AppendAllText(ErrorLogFile, builder.ToString());
+                    ErrorFile.Write(frame.ToString());
+                ErrorFile.WriteLine("//-------------------------------------------//");
 
                 OnError?.Invoke(sender, e);
             }
@@ -69,16 +77,12 @@ namespace LogicSimulator.Logger
         {
             if (started)
             {
-                var builder = new StringBuilder();
-
-                builder.AppendLine(DateTime.UtcNow.ToString());
-                builder.AppendLine($"{method.Type.Name} {method.Name}({string.Join(", ", Arguments.Select(a => $"{a.Type.Name} {a.Name}"))})");
-                builder.AppendLine("----------");
+                MethodFile.WriteLine(DateTime.UtcNow.ToString());
+                MethodFile.WriteLine($"{method.Type.Name} {method.Name}({string.Join(", ", Arguments.Select(a => $"{a.Type.Name} {a.Name}"))})");
+                MethodFile.WriteLine("----------");
                 foreach (var agrument in Arguments)
-                    builder.AppendLine($"{agrument.Name}: {JsonConvert.SerializeObject(agrument.Data)}");
-                builder.AppendLine("//-------------------------------------------//");
-
-                File.AppendAllText(MethodLogFile, builder.ToString());
+                    MethodFile.WriteLine($"{agrument.Name}: {JsonConvert.SerializeObject(agrument.Data)}");
+                MethodFile.WriteLine("//-------------------------------------------//");
             }
         }
     }

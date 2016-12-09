@@ -43,6 +43,10 @@ namespace LogicSimulator.WindowsUI
             Trace.AutoFlush = true;
 
             Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
+
+#if DEBUG
+            Log.Stop();
+#endif
         }
     }
 }
