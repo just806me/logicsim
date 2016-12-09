@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+#if DEBUG
+using LogicSimulator.Logger;
+#endif
 
 namespace LogicSimulator.WindowsUI
 {
@@ -18,20 +19,15 @@ namespace LogicSimulator.WindowsUI
         static void Main(string[] args)
         {
 #if DEBUG
-            var dom = AppDomain.CurrentDomain;
-            dom.FirstChanceException += (sender, e) =>
+            Log.Start();
+            Log.OnError += (sender, e) =>
             {
-                var builder = new StringBuilder();
-
-                builder.AppendLine($"UTC time: {DateTime.UtcNow.ToString()}");
-                builder.AppendLine($"Error: {e.Exception.Message}");
-                builder.AppendLine($"Short stack: {e.Exception.StackTrace}");
-                builder.AppendLine("Full stack:");
-                foreach (var frame in new StackTrace(true).GetFrames())
-                    builder.Append(frame.ToString());
-                builder.AppendLine("//-------------------------------------------//");
-
-                File.AppendAllText("log.txt", builder.ToString());
+                /* 
+                 * TODO:
+                 * Спросить отправлять ли отчет
+                 * Если да - отправить файлы Log.ErrorLogFile и Log.MethodLogFile на сервер
+                 * 
+                 */
             };
 #endif
 
