@@ -30,8 +30,8 @@ namespace LogicSimulator.Logger
         private static StreamWriter ErrorFile;
         private static StreamWriter MethodFile;
 
-        public static string ErrorLogFile => $"{Environment.MachineName}.{Environment.UserName}.errors.log";
-        public static string MethodLogFile => $"{Environment.MachineName}.{Environment.UserName}.methods.log";
+        public static string ErrorLogFile => Path.Combine(Path.GetTempPath(), $"{Environment.MachineName}.{Environment.UserName}.errors.log");
+        public static string MethodLogFile => Path.Combine(Path.GetTempPath(), $"{Environment.MachineName}.{Environment.UserName}.methods.log");
 
         public static event EventHandler<FirstChanceExceptionEventArgs> OnError;
 
