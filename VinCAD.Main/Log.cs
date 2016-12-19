@@ -33,7 +33,18 @@ namespace VinCAD.Logger
         public static string ErrorLogFile => Path.Combine(Path.GetTempPath(), $"{Environment.MachineName}.{Environment.UserName}.errors.log");
         public static string MethodLogFile => Path.Combine(Path.GetTempPath(), $"{Environment.MachineName}.{Environment.UserName}.methods.log");
 
-        public static event EventHandler<FirstChanceExceptionEventArgs> OnError;
+        public static event UnhandledExceptionEventHandler OnError
+        {
+            add
+            {
+                AppDomain.CurrentDomain.UnhandledException += value;
+            }
+
+            remove
+            {
+                AppDomain.CurrentDomain.UnhandledException -= value;
+            }
+        }
 
         public static void Start()
         {
@@ -46,6 +57,7 @@ namespace VinCAD.Logger
         public static void Stop()
         {
             started = false;
+            Flush();
             ErrorFile.Dispose();
             MethodFile.Dispose();
             AppDomain.CurrentDomain.FirstChanceException -= Error;
@@ -68,8 +80,6 @@ namespace VinCAD.Logger
                 foreach (var frame in new StackTrace(true).GetFrames())
                     ErrorFile.Write(frame.ToString());
                 ErrorFile.WriteLine("//-------------------------------------------//");
-
-                OnError?.Invoke(sender, e);
             }
         }
 
