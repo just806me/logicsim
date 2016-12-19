@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicSimulator.Main", "LogicSimulator.Main\LogicSimulator.Main.csproj", "{14A59A8A-26FA-418E-8E91-B87EE0955345}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinCAD.Main", "VinCAD.Main\VinCAD.Main.csproj", "{14A59A8A-26FA-418E-8E91-B87EE0955345}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicSimulator.WindowsUI", "LogicSimulator.WindowsUI\LogicSimulator.WindowsUI.csproj", "{CF61ECBA-380E-4A0C-92E6-428A5E0BB53A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinCAD.WindowsUI", "VinCAD.WindowsUI\VinCAD.WindowsUI.csproj", "{CF61ECBA-380E-4A0C-92E6-428A5E0BB53A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicSimulator.Console", "LogicSimulator.Console\LogicSimulator.Console.csproj", "{9E6743AC-F25C-450C-835C-73C2FF50D7B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinCAD.Console", "VinCAD.Console\VinCAD.Console.csproj", "{9E6743AC-F25C-450C-835C-73C2FF50D7B0}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{9E6743AC-F25C-450C-835C-73C2FF50D7B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E6743AC-F25C-450C-835C-73C2FF50D7B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E6743AC-F25C-450C-835C-73C2FF50D7B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Debug|Any CPU.ActiveCfg = Debug
+		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Debug|Any CPU.Build.0 = Debug
+		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Release|Any CPU.ActiveCfg = Release
+		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
