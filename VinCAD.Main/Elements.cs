@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+#if DEBUG
+using VinCAD.Logger;
+#endif
+
 namespace VinCAD.Main
 {
 	public struct ElementValue
@@ -33,6 +37,15 @@ namespace VinCAD.Main
         [JsonConstructor]
         public Component(string name, ComponentType type, IEnumerable<string> input)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Component::ctor", Type = typeof(Component) },
+                new ArgumentInfo { Name = nameof(name), Type = name.GetType(), Data = name },
+                new ArgumentInfo { Name = nameof(type), Type = type.GetType(), Data = type },
+                new ArgumentInfo { Name = nameof(input), Type = input.GetType(), Data = input }
+            );
+#endif
+
             Name = name;
             Type = type;
             _input = input.ToList();
@@ -41,6 +54,13 @@ namespace VinCAD.Main
 
         public void Calculate(ElementValue[] inputValues)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Component::Calculate", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(inputValues), Type = inputValues.GetType(), Data = inputValues }
+            );
+#endif
+
             #region arguments check
 
             if (inputValues == null)
@@ -123,6 +143,13 @@ namespace VinCAD.Main
 
         public void AddInput(string input)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Component::AddInput", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(input), Type = input.GetType(), Data = input }
+            );
+#endif
+
             #region arguments check
 
             if (string.IsNullOrEmpty(input))
@@ -135,6 +162,13 @@ namespace VinCAD.Main
 
         public void RemoveInput(string input)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Component::RemoveInput", Type = typeof(void) },
+                new ArgumentInfo { Name = nameof(input), Type = input.GetType(), Data = input }
+            );
+#endif
+
             #region arguments check
 
             if (string.IsNullOrEmpty(input))
@@ -167,6 +201,13 @@ namespace VinCAD.Main
         [JsonConstructor]
         public Input(string name)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Input::ctor", Type = typeof(Input) },
+                new ArgumentInfo { Name = nameof(name), Type = name.GetType(), Data = name }
+            );
+#endif
+
             Name = name;
         }
     }
@@ -183,6 +224,14 @@ namespace VinCAD.Main
         [JsonConstructor]
         public Output(string name, string input)
         {
+#if DEBUG
+            Log.Method(
+                new MethodInfo { Name = "Output::ctor", Type = typeof(Output) },
+                new ArgumentInfo { Name = nameof(name), Type = name.GetType(), Data = name },
+                new ArgumentInfo { Name = nameof(input), Type = input.GetType(), Data = input }
+            );
+#endif
+
             Name = name;
             Input = input;
 		}
