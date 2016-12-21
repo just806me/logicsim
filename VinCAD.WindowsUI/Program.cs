@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -12,6 +13,8 @@ namespace VinCAD.WindowsUI
 {
     static class Program
     {
+        private const string CURRENT_VERSION = "qwerty";
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -39,8 +42,27 @@ namespace VinCAD.WindowsUI
             Thread.CurrentThread.CurrentUICulture = ci;
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
 
-            Trace.Listeners.Add(new TextWriterTraceListener("trace.log"));
-            Trace.AutoFlush = true;
+            //using (var cl = new WebClient())
+            //{
+            //    var version = cl.DownloadString("http://vincad.tk/api/version");
+            //    if (version != CURRENT_VERSION && 
+            //        MessageBox.Show("A new update is available! Download it?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            //            == DialogResult.Yes)
+            //    {
+            //        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            //        {
+            //            cl.DownloadFile("http://vincad.tk/api/setup?platform=windows", "update.exe");
+            //            Process.Start("update.exe");
+            //        }
+            //        else
+            //        {
+            //            // ? Может просто архив скачать и распаковать в себя.
+            //        }
+
+            //        return;
+            //    }
+            //}
+
 
             Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
 

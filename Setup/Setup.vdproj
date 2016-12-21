@@ -15,18 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_3CD35E5110CAFB32CB3664CB7425BA99"
-        "OwnerKey" = "8:_69035C28DB4D4B82A131D6F5C74D1C1B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3CD35E5110CAFB32CB3664CB7425BA99"
-        "OwnerKey" = "8:_E20F774ED06046C3A1FF257159ABCC7D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_42EFBD9E0F1048F2A886AA7DB325B41E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -39,26 +27,38 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E20F774ED06046C3A1FF257159ABCC7D"
+        "MsmKey" = "8:_6CC37CA5D336D85C7C461C324783F1C7"
+        "OwnerKey" = "8:_69035C28DB4D4B82A131D6F5C74D1C1B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C3589ADE002D0A69A361A4CF59CB513D"
+        "OwnerKey" = "8:_69035C28DB4D4B82A131D6F5C74D1C1B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C3589ADE002D0A69A361A4CF59CB513D"
+        "OwnerKey" = "8:_6CC37CA5D336D85C7C461C324783F1C7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_69035C28DB4D4B82A131D6F5C74D1C1B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_69035C28DB4D4B82A131D6F5C74D1C1B"
+        "OwnerKey" = "8:_6CC37CA5D336D85C7C461C324783F1C7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E20F774ED06046C3A1FF257159ABCC7D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3CD35E5110CAFB32CB3664CB7425BA99"
+        "OwnerKey" = "8:_C3589ADE002D0A69A361A4CF59CB513D"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -156,37 +156,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3CD35E5110CAFB32CB3664CB7425BA99"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_3CD35E5110CAFB32CB3664CB7425BA99"
-                    {
-                    "Name" = "8:Newtonsoft.Json.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Newtonsoft.Json.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B401E31B324D43A0A1EA4EDC55D4A3C3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_42EFBD9E0F1048F2A886AA7DB325B41E"
             {
             "SourcePath" = "8:..\\VinCAD.WindowsUI\\Resources\\component.ico"
@@ -207,20 +176,51 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E20F774ED06046C3A1FF257159ABCC7D"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6CC37CA5D336D85C7C461C324783F1C7"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:VinCAD.Main, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_E20F774ED06046C3A1FF257159ABCC7D"
+                    "_6CC37CA5D336D85C7C461C324783F1C7"
                     {
                     "Name" = "8:VinCAD.Main.dll"
                     "Attributes" = "3:512"
                     }
                 }
             "SourcePath" = "8:VinCAD.Main.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B401E31B324D43A0A1EA4EDC55D4A3C3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C3589ADE002D0A69A361A4CF59CB513D"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_C3589ADE002D0A69A361A4CF59CB513D"
+                    {
+                    "Name" = "8:Newtonsoft.Json.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Newtonsoft.Json.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B401E31B324D43A0A1EA4EDC55D4A3C3"
@@ -326,7 +326,7 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:"
+        "Manufacturer" = "8:Moonlight Software"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://vincad.tk/"
         "Title" = "8:Setup"

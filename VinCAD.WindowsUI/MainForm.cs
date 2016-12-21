@@ -329,9 +329,14 @@ namespace VinCAD.WindowsUI
 				case "Input":
 					{
 						var max_input_number = (scheme.Inputs.Count > 0 ? scheme.Inputs
-							.Select(x => x.Name.Substring(1))
-							.Where(x => { int number; return int.TryParse(x, out number); })
-							.Select(x => int.Parse(x))
+                            .Select(x => 
+                            {
+                                int number;
+                                if (int.TryParse(x.Name.Substring(1), out number))
+                                    return number;
+                                else
+                                    return 0;
+                            })
 							.Max() : 0);
 
 						dragElement = new DrawableInput(
@@ -345,12 +350,17 @@ namespace VinCAD.WindowsUI
 				case "Output":
 					{
 						var max_output_number = (scheme.Outputs.Count > 0 ? scheme.Outputs
-							.Select(x => x.Name.Substring(1))
-							.Where(x => { int number; return int.TryParse(x, out number); })
-							.Select(x => int.Parse(x))
-							.Max() : 0);
+                            .Select(x =>
+                            {
+                                int number;
+                                if (int.TryParse(x.Name.Substring(1), out number))
+                                    return number;
+                                else
+                                    return 0;
+                            })
+                            .Max() : 0);
 
-						dragElement = new DrawableOutput(
+                        dragElement = new DrawableOutput(
 							$"y{max_output_number + 1}",
 							string.Empty,
 							0, 0,
@@ -365,10 +375,15 @@ namespace VinCAD.WindowsUI
 						if (Enum.TryParse(item, out componentType))
 						{
 							var max_component_number = (scheme.Components.Count > 0 ? scheme.Components
-								.Select(x => x.Name.Substring(1))
-								.Where(x => { int number; return int.TryParse(x, out number); })
-								.Select(x => int.Parse(x))
-								.Max() : 0);
+                                .Select(x =>
+                                {
+                                    int number;
+                                    if (int.TryParse(x.Name.Substring(1), out number))
+                                        return number;
+                                    else
+                                        return 0;
+                                })
+                                .Max() : 0);
 
 							dragElement = new DrawableComponent(
 								$"c{max_component_number + 1}",
