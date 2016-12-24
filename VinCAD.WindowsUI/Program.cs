@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,43 +9,42 @@ using VinCAD.Logger;
 
 namespace VinCAD.WindowsUI
 {
-    static class Program
-    {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main(string[] args)
-        {
+	static class Program
+	{
+
+		static string PrimaryWebSite = "http://vincad.tk";
+
+		/// <summary>
+		/// The main entry point for the application.
+		/// </summary>
+		[STAThread]
+		static void Main(string[] args)
+		{
 #if DEBUG
-            Log.Start();
-            Log.OnError += (sender, e) =>
-            {
-                /* 
-                 * TODO:
-                 * Спросить отправлять ли отчет
-                 * Если да - отправить файлы Log.ErrorLogFile и Log.MethodLogFile на сервер
-                 * 
-                 */
-            };
+			Log.Start(PrimaryWebSite);
+			Log.OnError += (sender, e) =>
+			{
+				if (MessageBox.Show(
+					Resource.Localization.Error, Resource.Localization.MainForm_Name,
+					MessageBoxButtons.YesNo) == DialogResult.Yes)
+				{
+					Log.Upload();
+				}
+			};
 #endif
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+			//ThreadLocalization
+			var ci = new CultureInfo("uk");
+			Thread.CurrentThread.CurrentUICulture = ci;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
 
-            //ThreadLocalization
-            var ci = new CultureInfo("uk");
-            Thread.CurrentThread.CurrentUICulture = ci;
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
-
-            Trace.Listeners.Add(new TextWriterTraceListener("trace.log"));
-            Trace.AutoFlush = true;
-
-            Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
+			Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
 
 #if DEBUG
-            Log.Stop();
+			Log.Stop();
 #endif
-        }
-    }
+		}
+	}
 }
