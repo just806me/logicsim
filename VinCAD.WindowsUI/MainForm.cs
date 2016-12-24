@@ -536,5 +536,12 @@ namespace VinCAD.WindowsUI
 				}
 
 		}
+#if DEBUG
+		
+		private void sendLogsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show(Logger.Log.Upload());
+		}
+#endif
 	}
 }
