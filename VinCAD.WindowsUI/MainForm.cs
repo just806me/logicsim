@@ -456,8 +456,12 @@ namespace VinCAD.WindowsUI
 
 		private void pictureBox_SizeChanged(object sender, EventArgs e)
 		{
-			scheme.SetSize(pictureBox.Width, pictureBox.Height);
-			DrawScheme();
+            // mono fix
+            if (scheme != null)
+            {
+                scheme.SetSize(pictureBox.Width, pictureBox.Height);
+                DrawScheme();
+            }
 		}
 
 		private void printToolStripMenuItem_Click(object sender, EventArgs e)
