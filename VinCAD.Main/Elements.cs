@@ -14,6 +14,12 @@ namespace VinCAD.Main
 	{
 		public bool? Value { get; set; }
 		public uint? Delay { get; set; }
+
+		public void SetNull()
+		{
+			Value = null;
+			Delay = null;
+		}
 	}
 
     public interface IElement
@@ -69,69 +75,132 @@ namespace VinCAD.Main
 			#endregion
 
 			ElementValue tmp = new ElementValue();
+			bool hasNull = false;
             switch (Type)
             {
                 case ComponentType.And:
 					tmp.Value = true;
-                    foreach (var inputValue in inputValues)
-						tmp.Value = tmp.Value.Value && inputValue.Value.Value;
+					foreach (var inputValue in inputValues)
+						if (inputValue.Value.HasValue)
+							tmp.Value = tmp.Value.Value && inputValue.Value.Value;
+						else
+							hasNull = true;
 
-					if (tmp.Value == true)
-						tmp.Delay = inputValues.Max(x => x.Delay) + 1;
+					if (hasNull)
+					{
+						if (tmp.Value == true)
+							return;
+						else
+							tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					}
 					else
-						tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					{
+						if (tmp.Value == true)
+							tmp.Delay = inputValues.Max(x => x.Delay) + 1;
+						else
+							tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					}
+
 					break;
                 case ComponentType.AndNot:
 					tmp.Value = true;
 					foreach (var inputValue in inputValues)
-						tmp.Value = tmp.Value.Value && inputValue.Value.Value;
+						if (inputValue.Value.HasValue)
+							tmp.Value = tmp.Value.Value && inputValue.Value.Value;
+						else
+							hasNull = true;
 
-					if (tmp.Value == true)
-						tmp.Delay = inputValues.Max(x => x.Delay) + 1;
+					if (hasNull)
+					{
+						if (tmp.Value == true)
+							return;
+						else
+							tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					}
 					else
-						tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					{
+						if (tmp.Value == true)
+							tmp.Delay = inputValues.Max(x => x.Delay) + 1;
+						else
+							tmp.Delay = inputValues.Where(x => x.Value == false).Min(y => y.Delay) + 1;
+					}
 
 					tmp.Value = !tmp.Value;
                     break;
                 case ComponentType.Or:
 					tmp.Value = false;
                     foreach (var inputValue in inputValues)
-						tmp.Value = tmp.Value.Value || inputValue.Value.Value;
+						if (inputValue.Value.HasValue)
+							tmp.Value = tmp.Value.Value || inputValue.Value.Value;
+						else
+							hasNull = true;
 
-					if (tmp.Value == true)
-						tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+					if (hasNull)
+					{
+						if (tmp.Value == true)
+							tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+						else
+							return;
+					}
 					else
-						tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+					{
+						if (tmp.Value == true)
+							tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+						else
+							tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+					}
 					break;
                 case ComponentType.OrNot:
 					tmp.Value = false;
 					foreach (var inputValue in inputValues)
-						tmp.Value = tmp.Value.Value || inputValue.Value.Value;
+						if (inputValue.Value.HasValue)
+							tmp.Value = tmp.Value.Value || inputValue.Value.Value;
+						else
+							hasNull = true;
 
-					if (tmp.Value == true)
-						tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+					if (hasNull)
+					{
+						if (tmp.Value == true)
+							tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+						else
+							return;
+					}
 					else
-						tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+					{
+						if (tmp.Value == true)
+							tmp.Delay = inputValues.Where(x => x.Value == true).Min(x => x.Delay) + 1;
+						else
+							tmp.Delay = inputValues.Max(y => y.Delay) + 1;
+					}
 
 					tmp.Value = !tmp.Value;
                     break;
                 case ComponentType.Xor:
 					tmp.Value = false;
-                    foreach (var inputValue in inputValues)
-						tmp.Value = tmp.Value.Value ^ inputValue.Value.Value;
+					foreach (var inputValue in inputValues)
+						if (inputValue.Value.HasValue)
+							tmp.Value = tmp.Value.Value ^ inputValue.Value.Value;
+						else
+							return;
 
 					tmp.Delay = inputValues.Max(y => y.Delay) + 1;
 					break;
                 case ComponentType.XorNot:
 					tmp.Value = false;
 					foreach (var inputValue in inputValues)
-						tmp.Value = tmp.Value.Value ^ inputValue.Value.Value;
+						if (inputValue.Value.HasValue)
+							tmp.Value = tmp.Value.Value ^ inputValue.Value.Value;
+						else
+							return;
 
 					tmp.Delay = inputValues.Max(y => y.Delay) + 1;
 
 					tmp.Value = !tmp.Value;
                     break;
                 case ComponentType.Not:
+					if (!inputValues[0].Value.HasValue)
+						return;
+
 					tmp.Value = !inputValues[0].Value.Value;
 					tmp.Delay = inputValues[0].Delay + 1;
                     break;

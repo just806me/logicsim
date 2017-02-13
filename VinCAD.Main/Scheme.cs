@@ -274,7 +274,37 @@ namespace VinCAD.Main
 				output.Value = GetElementValue(output.Input);
 		}
 
-		public ElementValue GetElementValue(string name)
+		public void CalculateCycleForCurrentState()
+		{
+#if DEBUG
+			Log.Method(
+				new MethodInfo { Name = "Scheme::CalculateCycleForCurrentState", Type = typeof(void) }
+			);
+#endif
+			for (int i = 0; i < _components.Count; i++)
+				_components[i].Value = new ElementValue();
+
+			bool changed = true;
+			while (changed)
+			{
+				changed = false;
+				foreach (var component in _components.Where(x => !x.Value.Value.HasValue))
+				{
+					var values = new ElementValue[component.Input.Count];
+					for (int i = 0; i < component.Input.Count; i++)
+						values[i] = GetElementValue(component.Input.ElementAt(i), true);
+
+					component.Calculate(values);
+					if (component.Value.Value.HasValue)
+						changed = true;
+				}
+			}
+
+			foreach (var output in _outputs)
+				output.Value = GetElementValue(output.Input, true);
+		}
+
+		public ElementValue GetElementValue(string name, bool noValueAllow = false)
 		{
 #if DEBUG
 			Log.Method(
@@ -287,9 +317,9 @@ namespace VinCAD.Main
 
 			if (match == null)
 				throw new InputNotFoundException() { InputName = name };
-			if (!match.Value.Value.HasValue)
+			if (!(match.Value.Value.HasValue || noValueAllow))
 				throw new InputHasNoValueException() { InputName = name };
-			if (!match.Value.Delay.HasValue)
+			if (!(match.Value.Delay.HasValue || noValueAllow))
 				throw new InputHasNoValueException() { InputName = name };
 
 			return match.Value;
@@ -310,7 +340,7 @@ namespace VinCAD.Main
 			for (int i = 0; i < inputs_count_pow2; i++)
 			{
 				SetCurrentState(i);
-				CalculateForCurrentState();
+				CalculateCycleForCurrentState();
 
 				for (int j = 0; j < inputs_plus_outputs_count; j++)
 				{
