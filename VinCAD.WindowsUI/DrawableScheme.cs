@@ -26,9 +26,11 @@ namespace VinCAD.WindowsUI
         [JsonRequired]
         public ReadOnlyCollection<DrawableComponent> Components =>
             _elements.Where(x => x is DrawableComponent).Cast<DrawableComponent>().ToList().AsReadOnly();
+
+        [JsonRequired]
+        public ReadOnlyCollection<Line> Lines => _lines.AsReadOnly();
         [JsonIgnore]
-        public ReadOnlyCollection<Line> Lines =>
-            _elements.Where(x => x is Line).Cast<Line>().ToList().AsReadOnly();
+        private List<Line> _lines;
 
         [JsonRequired]
         public int Width { get; private set; }
@@ -51,6 +53,8 @@ namespace VinCAD.WindowsUI
         public DrawableScheme(int width, int height)
         {
             _elements = new List<IDrawableElement>();
+            _lines = new List<Line>();
+
             SetSize(width, height);
         }
 
@@ -65,8 +69,11 @@ namespace VinCAD.WindowsUI
                 _elements.AddRange(components);
             if (outputs != null)
                 _elements.AddRange(outputs);
+
             if (lines != null)
-                _elements.AddRange(lines);
+                _lines = lines.ToList();
+            else
+                _lines = new List<Line>();
 
             SetSize(width, height);
         }
@@ -113,28 +120,7 @@ namespace VinCAD.WindowsUI
 
         public void RestoreLines()
         {
-            _elements.RemoveAll(x => Lines.Contains(x));
-
-            foreach (var component in Components)
-                foreach (var input in component.Input)
-                    _elements.Add(new Line(
-                        _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == input) as IMoveableElement,
-                        component
-                    ));
-
-            foreach (var output in Outputs)
-            {
-                _elements.Add(new Line(
-                    _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == output.Input) as IMoveableElement,
-                    output
-                ));
-            }
-
-            foreach (var line in Lines)
-                line.connection = new Tuple<IMoveableElement, IMoveableElement>(
-                    _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == line.connectionName.Item1) as IMoveableElement,
-                    _elements.FirstOrDefault(x => x is IMoveableElement && x.Name == line.connectionName.Item2) as IMoveableElement
-                );
+            throw new NotImplementedException();
         }
 
         public void SetSize(int width, int height)
@@ -154,11 +140,13 @@ namespace VinCAD.WindowsUI
         public void Move(int dx, int dy)
         {
             foreach (var item in _elements)
-                if (item is IMoveableElement)
-                {
-                    ((IMoveableElement)item).X += dx;
-                    ((IMoveableElement)item).Y += dy;
-                }
+            {
+                item.X += dx;
+                item.Y += dy;
+            }
+
+            foreach (var line in Lines)
+                line.Move(dx, dy);
         }
 
         public void Draw(Graphics graphics, Pen pen, bool clear = false, Color? fillColor = null)
@@ -168,6 +156,9 @@ namespace VinCAD.WindowsUI
 
             foreach (var element in _elements)
                 element.Draw(graphics, pen);
+
+            foreach (var line in Lines)
+                line.Draw(graphics, pen);
         }
 
         public Image Draw(Pen pen)
@@ -182,36 +173,44 @@ namespace VinCAD.WindowsUI
         public IEnumerable<IDrawableElement> GetElementsAtRectangle(int x, int y, int width, int height)
             => _elements.FindAll(e => e.IsInRectangle(x, y, width, height));
 
-        public IDrawableElement GetElementAtLocation(Point p) => _elements.Find(e => e.ContainsLocation(p));
+        public IDrawableElement GetElementAtLocation(Point p) 
+            => _elements.Find(e => e.ContainsLocation(p));
 
-        public IDrawableElement GetElementAtLocation(int x, int y) => _elements.Find(e => e.ContainsLocation(x, y));
+        public IDrawableElement GetElementAtLocation(int x, int y)
+            => _elements.Find(e => e.ContainsLocation(x, y));
 
         public void AddElement(IDrawableElement element) => _elements.Add(element);
+
+        public void AddLine(Line line) => _lines.Add(line);
 
         public void RemoveElement(IDrawableElement element)
         {
             _elements.Remove(element);
-            _elements.RemoveAll(x => x is Line && (x as Line).ConnectedTo(element));
+            _lines.RemoveAll(x => x.IsConnectedTo(element));
 
             foreach (var item in _elements)
             {
                 if (item is Output)
                 {
-                    var output = item as Output;
+                    var output = (Output)item;
                     if (output.Input == element.Name)
                         output.Input = null;
 
                 }
                 else if (item is Component)
                 {
-                    var component = item as Component;
+                    var component = (Component)item;
                     if (component.Input.Any(c => c == element.Name))
                         component.RemoveInput(element.Name);
                 }
             }
         }
 
-        public void Clear() => _elements.Clear();
+        public void Clear()
+        {
+            _elements.Clear();
+            _lines.Clear();
+        }
 
         public void Dispose()
         {

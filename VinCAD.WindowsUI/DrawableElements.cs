@@ -1,41 +1,36 @@
 using VinCAD.Main;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Collections.ObjectModel;
+using System;
 
 namespace VinCAD.WindowsUI
 {
-    public interface IDrawableElement : IElement
+    public interface IDrawable
     {
-        int X { get; }
-        int Y { get; }
-        int Width { get; }
-        int Height { get; }
-
         void Draw(Graphics graphics, Pen pen);
+    }
+
+    public interface IDrawableElement : IDrawable, IElement
+    {
+        [JsonRequired]
+        int X { get; set; }
+        [JsonRequired]
+        int Y { get; set; }
+        [JsonRequired]
+        int Width { get; set; }
+        [JsonRequired]
+        int Height { get; set; }
+
         bool ContainsLocation(Point p);
         bool ContainsLocation(int x, int y);
         bool IsInRectangle(Rectangle bounds);
         bool IsInRectangle(int x, int y, int width, int height);
     }
 
-    public interface IMoveableElement : IDrawableElement, IElement
-    {
-        [JsonRequired]
-        new int X { get; set; }
-
-        [JsonRequired]
-        new int Y { get; set; }
-
-        [JsonRequired]
-        new int Width { get; set; }
-
-        [JsonRequired]
-        new int Height { get; set; }
-    }
-
-    public class DrawableComponent : Component, IMoveableElement
+    public class DrawableComponent : Component, IDrawableElement
     {
         [JsonRequired]
         public int Height { get; set; }
@@ -192,17 +187,17 @@ namespace VinCAD.WindowsUI
 
         public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
 
-        public bool IsInRectangle(Rectangle rectangle) 
-            => rectangle.Contains(X, Y) 
-            || rectangle.Contains(X, Y + Height) 
-            || rectangle.Contains(X + Width, Y) 
-            || rectangle.Contains(X + Width, Y + Height) 
+        public bool IsInRectangle(Rectangle rectangle)
+            => rectangle.Contains(X, Y)
+            || rectangle.Contains(X, Y + Height)
+            || rectangle.Contains(X + Width, Y)
+            || rectangle.Contains(X + Width, Y + Height)
             || rectangle.Contains(new Rectangle(X, Y, Width, Height));
 
         public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
     }
 
-    public class DrawableInput : Input, IMoveableElement
+    public class DrawableInput : Input, IDrawableElement
     {
         [JsonRequired]
         public int Height { get; set; }
@@ -244,7 +239,7 @@ namespace VinCAD.WindowsUI
         public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
     }
 
-    public class DrawableOutput : Output, IMoveableElement
+    public class DrawableOutput : Output, IDrawableElement
     {
         [JsonRequired]
         public int Height { get; set; }
@@ -286,70 +281,80 @@ namespace VinCAD.WindowsUI
         public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
     }
 
-    public class Line : IDrawableElement
+    public class Line : IDrawable
     {
+        [JsonIgnore]
+        public IDrawableElement Start { get; set; }
         [JsonRequired]
-        public Tuple<string, string> connectionName
-            => new Tuple<string, string>(connection.Item1.Name, connection.Item2.Name);
+        public string StartName => Start.Name;
 
         [JsonIgnore]
-        public Tuple<IMoveableElement, IMoveableElement> connection { get; set; }
+        public IDrawableElement End { get; set; }
+        [JsonRequired]
+        public string EndName => End.Name;
+
         [JsonIgnore]
-        public string Name { get { return string.Empty; } set { } }
+        public Point StartPoint => Start != null ? new Point(Start.X + Start.Width, Start.Y + Start.Height / 2) : new Point();
         [JsonIgnore]
-        public ElementValue Value { get; set; }
-        [JsonIgnore]
-        public int Height
+        public Point EndPoint
         {
             get
             {
-                if (connection.Item2 is Output)
-                    return connection.Item2.Y + connection.Item2.Height / 2;
-                else if (connection.Item2 is Component)
+                if (End is Output)
+                    return new Point(End.X, End.Y + End.Height / 2);
+                else if (End is Component)
                 {
-                    var component = (connection.Item2 as Component);
-                    var inputs_count = component.Input.Count + 1f;
-                    var index = component.Input.IndexOf(connection.Item1.Name) + 1f;
+                    var inputs_count = ((Component)End).Input.Count + 1f;
+                    var index = ((Component)End).Input.IndexOf(Start.Name) + 1f;
 
-                    return (int)Math.Round(connection.Item2.Y + connection.Item2.Height * index / inputs_count);
+                    return new Point(End.X, (int)Math.Round(End.Y + End.Height * index / inputs_count));
                 }
-                else
-                    return 0;
+                else return new Point();
             }
         }
         [JsonIgnore]
-        public int Width => connection.Item2.X;
+        public ReadOnlyCollection<Point> AllPoints
+        {
+            get
+            {
+                var result = new List<Point>(_points.Count + 2);
+
+                result.Add(StartPoint);
+                result.AddRange(_points);
+                result.Add(EndPoint);
+
+                return result.AsReadOnly();
+            }
+        }
+
         [JsonIgnore]
-        public int X => connection.Item1.X + connection.Item1.Width;
-        [JsonIgnore]
-        public int Y => connection.Item1.Y + connection.Item1.Height / 2;
+        private List<Point> _points;
+        [JsonRequired]
+        public ReadOnlyCollection<Point> Points => _points.AsReadOnly();
 
         [JsonConstructor]
-        public Line(Tuple<string, string> connectionName)
-            : this(new DrawableInput(connectionName.Item1), new DrawableInput(connectionName.Item2)) { }
+        public Line(string startName, string endName, IEnumerable<Point> points)
+            : this(new DrawableInput(startName), new DrawableInput(endName), points) { }
 
-        public Line(IMoveableElement element1, IMoveableElement element2)
+        public Line(IDrawableElement start, IDrawableElement end, IEnumerable<Point> points)
         {
-            connection = new Tuple<IMoveableElement, IMoveableElement>(element1, element2);
+            Start = start;
+            End = end;
+            _points = points.ToList();
         }
 
-        public void Draw(Graphics graphics, Pen pen)
+        public void Draw(Graphics graphics, Pen pen) => graphics.DrawLines(pen, AllPoints.ToArray());
+
+        public bool IsConnectedTo(IDrawableElement element) => Start == element || End == element;
+
+        public void AddPoint(Point point) => _points.Add(point);
+
+        public void AddPoint(int x, int y) => _points.Add(new Point(x, y));
+
+        public void Move(int dx, int dy)
         {
-            graphics.DrawLine(pen, X, Y, (X + Width) / 2, Y);
-            graphics.DrawLine(pen, (X + Width) / 2, Y, (X + Width) / 2, Height);
-            graphics.DrawLine(pen, (X + Width) / 2, Height, Width, Height);
-
+            for (int i = 0; i < _points.Count; i++)
+                _points[i] = new Point(_points[i].X + dx, _points[i].Y + dy);
         }
-
-        public bool ContainsLocation(Point p) => false;
-
-        public bool ContainsLocation(int x, int y) => false;
-
-        public bool IsInRectangle(Rectangle rectangle) => false;
-
-        public bool IsInRectangle(int x, int y, int width, int height) => false;
-
-        internal bool ConnectedTo(IDrawableElement element)
-            => connection.Item1 == element || connection.Item2 == element;
     }
 }

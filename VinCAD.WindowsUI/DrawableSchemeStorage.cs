@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace VinCAD.WindowsUI
 {
@@ -16,7 +17,12 @@ namespace VinCAD.WindowsUI
             #endregion
 
             var scheme = JsonConvert.DeserializeObject<DrawableScheme>(json);
-            scheme.RestoreLines();
+
+            foreach (var line in scheme.Lines)
+            {
+                line.Start = scheme.Elements.FirstOrDefault(e => e.Name == line.StartName);
+                line.End = scheme.Elements.FirstOrDefault(e => e.Name == line.EndName);
+            }
 
 			return scheme;
 		}
@@ -60,7 +66,7 @@ namespace VinCAD.WindowsUI
             #endregion
 
             using (var streamWriter = new StreamWriter(stream))
-                streamWriter.Write(DrawableSchemeStorage.Save(scheme));
+                streamWriter.Write(Save(scheme));
 		}
 	}
 } 
