@@ -1,0 +1,5 @@
+;!@Install@!UTF-8!
+Title="VinCAD"
+BeginPrompt="Do you want to install VinCAD on your computer?"
+RunProgram="setup.exe"
+;!@InstallEnd@!

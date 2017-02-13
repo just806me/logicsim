@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VinCAD.Console", "VinCAD.Co
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Scripts", "Scripts\Scripts.pyproj", "{A631CF47-2971-4533-BFF8-989AF751C354}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,8 @@ Global
 		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Debug|Any CPU.Build.0 = Debug
 		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Release|Any CPU.ActiveCfg = Release
 		{D48C0D59-6F9E-4C25-87EE-8419B1CDE9DE}.Release|Any CPU.Build.0 = Release
+		{A631CF47-2971-4533-BFF8-989AF751C354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A631CF47-2971-4533-BFF8-989AF751C354}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
