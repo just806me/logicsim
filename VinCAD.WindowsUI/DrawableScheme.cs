@@ -16,9 +16,9 @@ namespace VinCAD.WindowsUI
         [JsonIgnore]
         public ReadOnlyCollection<IDrawableElement> Elements => _elements.AsReadOnly();
         private List<IDrawableElement> _elements;
-            
+
         [JsonRequired]
-        public ReadOnlyCollection<DrawableInput> Inputs => 
+        public ReadOnlyCollection<DrawableInput> Inputs =>
             _elements.Where(x => x is DrawableInput).Cast<DrawableInput>().ToList().AsReadOnly();
         [JsonRequired]
         public ReadOnlyCollection<DrawableOutput> Outputs =>
@@ -40,7 +40,7 @@ namespace VinCAD.WindowsUI
         private Bitmap _bitmap;
         [JsonIgnore]
         private Graphics _graphics;
-        
+
         [JsonIgnore]
         public const int ElementWidth = 40;
         [JsonIgnore]
@@ -83,7 +83,8 @@ namespace VinCAD.WindowsUI
             var elementX = 0;
             var elementY = 0;
 
-            var drawableInputs = scheme.Inputs.Select(i => {
+            var drawableInputs = scheme.Inputs.Select(i =>
+            {
                 var input = new DrawableInput(i.Name, elementX, elementY, ElementWidth, ElementHeight);
                 elementY += GapHeight + ElementHeight;
                 return input;
@@ -96,7 +97,8 @@ namespace VinCAD.WindowsUI
             var drawableComponents = new List<DrawableComponent>();
             foreach (var layer in scheme.ComponentLayers)
             {
-                drawableComponents.AddRange(layer.Select(c => {
+                drawableComponents.AddRange(layer.Select(c =>
+                {
                     var component = new DrawableComponent(c.Name, c.Type, c.Input, elementX, elementY, ElementWidth, ElementHeight);
                     elementY += GapHeight + ElementHeight;
                     return component;
@@ -106,7 +108,8 @@ namespace VinCAD.WindowsUI
                 elementY = 0;
             }
 
-            var drawableOutputs = scheme.Outputs.Select(o => {
+            var drawableOutputs = scheme.Outputs.Select(o =>
+            {
                 var output = new DrawableOutput(o.Name, o.Input, elementX, elementY, ElementWidth, ElementHeight);
                 elementY += GapHeight + ElementHeight;
                 return output;
@@ -120,7 +123,20 @@ namespace VinCAD.WindowsUI
 
         public void RestoreLines()
         {
-            throw new NotImplementedException();
+            _lines.Clear();
+
+            foreach (var component in Components)
+                foreach (var input in component.Input)
+                    AddLine(new Line(
+                        _elements.FirstOrDefault(x => x.Name == input),
+                        component, new Point[0]
+                    ));
+
+            foreach (var output in Outputs)
+                AddLine(new Line(
+                    _elements.FirstOrDefault(x => x.Name == output.Input),
+                    output, new Point[0]
+                ));
         }
 
         public void SetSize(int width, int height)
@@ -167,13 +183,13 @@ namespace VinCAD.WindowsUI
             return _bitmap;
         }
 
-        public IEnumerable<IDrawableElement> GetElementsAtRectangle(Rectangle bounds) 
+        public IEnumerable<IDrawableElement> GetElementsAtRectangle(Rectangle bounds)
             => _elements.FindAll(e => e.IsInRectangle(bounds));
 
         public IEnumerable<IDrawableElement> GetElementsAtRectangle(int x, int y, int width, int height)
             => _elements.FindAll(e => e.IsInRectangle(x, y, width, height));
 
-        public IDrawableElement GetElementAtLocation(Point p) 
+        public IDrawableElement GetElementAtLocation(Point p)
             => _elements.Find(e => e.ContainsLocation(p));
 
         public IDrawableElement GetElementAtLocation(int x, int y)
