@@ -14,12 +14,6 @@ namespace VinCAD.Main
 	{
 		public bool? Value { get; set; }
 		public uint? Delay { get; set; }
-
-		public void SetNull()
-		{
-			Value = null;
-			Delay = null;
-		}
 	}
 
     public interface IElement

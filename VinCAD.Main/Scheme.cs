@@ -412,6 +412,7 @@ namespace VinCAD.Main
 
 			bool[,] inputValues = new bool[_inputs.Count, TimeLimit];
 			ElementValue[,] outputValue = new ElementValue[_outputs.Count, TimeLimit];
+			uint maxDelay = 0;
 
 			for (uint CurrentTick = 0; CurrentTick < TimeLimit; CurrentTick++)
 			{
@@ -427,10 +428,17 @@ namespace VinCAD.Main
 				}
 
 				SetCurrentState(state);
-				CalculateForCurrentState();
+				CalculateCycleForCurrentState();
 
 				for (int i = 0; i < _outputs.Count; i++)
-					outputValue[i, CurrentTick] = _outputs[i].Value;
+					if (_outputs[i].Value.Value.HasValue)
+					{
+						outputValue[i, CurrentTick] = _outputs[i].Value;
+						maxDelay = Math.Max(maxDelay, _outputs[i].Value.Delay.Value);
+					}
+					else
+						outputValue[i, CurrentTick] =
+							CurrentTick >= 1 ? outputValue[i, CurrentTick - 1] : default(ElementValue);
 			}
 
 			for (int rw = 0; rw < ImgRows; rw++)
@@ -445,10 +453,13 @@ namespace VinCAD.Main
 				}
 				else
 				{
-					sigLv.Add(new Point(fieldFirstWidth,
-						(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
-					sigLv.Add(new Point(fieldFirstWidth + fieldStepWidth,
-						(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
+					if (outputValue[rw - _inputs.Count, 0].Value.HasValue)
+					{
+						sigLv.Add(new Point(fieldFirstWidth,
+							(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
+						sigLv.Add(new Point(fieldFirstWidth + fieldStepWidth,
+							(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
+					}
 				}
 
 				for (int tick = 1; tick < TimeLimit; tick++)
@@ -462,24 +473,35 @@ namespace VinCAD.Main
 					}
 					else
 					{
-						if (outputValue[rw - _inputs.Count, tick - 1].Value.Value ^ outputValue[rw - _inputs.Count, tick].Value.Value)
-						{
-							int dx = (int)(fieldStepWidth * outputValue[rw - _inputs.Count, tick].Delay.Value / (_componentLayers.Count + 1));
-							sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth + dx,
-								(int)((rw + (outputValue[rw - _inputs.Count, tick - 1].Value.Value ? .3f : 1f)) * fieldHeight))); // last
+						if (outputValue[rw - _inputs.Count, tick].Value.HasValue)
+							if (outputValue[rw - _inputs.Count, tick - 1].Value.HasValue)
+							{
+								if (outputValue[rw - _inputs.Count, tick - 1].Value.Value ^ outputValue[rw - _inputs.Count, tick].Value.Value)
+								{
+									int dx = (int)(fieldStepWidth * outputValue[rw - _inputs.Count, tick].Delay.Value / (maxDelay + 1));// (_componentLayers.Count + 1));
+									sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth + dx,
+										(int)((rw + (outputValue[rw - _inputs.Count, tick - 1].Value.Value ? .3f : 1f)) * fieldHeight))); // last
 
-							sigLv.Add(new Point(dx + fieldFirstWidth + tick * fieldStepWidth,
-							(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
-							sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
-								(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
-						}
-						else
-						{
-							sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
-								(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
-							sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
-								(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
-						}
+									sigLv.Add(new Point(dx + fieldFirstWidth + tick * fieldStepWidth,
+									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+									sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
+										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+								}
+								else
+								{
+									sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
+										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+									sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
+										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+								}
+							}
+							else
+							{
+								sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
+									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+								sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
+									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+							}
 					}
 				}
 
