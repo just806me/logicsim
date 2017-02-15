@@ -197,16 +197,14 @@ namespace VinCAD.WindowsUI
             {
                 if (item is Output)
                 {
-                    var output = item as Output;
-                    if (output.Input == element.Name)
-                        output.Input = null;
+                    if (((Output)item).Input == element.Name)
+                        ((Output)item).Input = null;
 
                 }
                 else if (item is Component)
                 {
-                    var component = item as Component;
-                    if (component.Input.Any(c => c == element.Name))
-                        component.RemoveInput(element.Name);
+                    if (((Component)item).Input.Any(c => c == element.Name))
+                        ((Component)item).RemoveInput(element.Name);
                 }
             }
         }

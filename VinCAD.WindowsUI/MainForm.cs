@@ -235,9 +235,9 @@ namespace VinCAD.WindowsUI
 						var add = !scheme.Elements.Contains(connectLine);
 
 						if (connectLine.connection.Item2 is Component)
-							(connectLine.connection.Item2 as Component).AddInput(connectLine.connection.Item1.Name);
-						else if (connectLine.connection.Item2 is Output && (connectLine.connection.Item2 as Output).Input == string.Empty)
-							(connectLine.connection.Item2 as Output).Input = connectLine.connection.Item1.Name;
+							((Component)connectLine.connection.Item2).AddInput(connectLine.connection.Item1.Name);
+						else if (connectLine.connection.Item2 is Output && string.IsNullOrEmpty(((Output)connectLine.connection.Item2).Input))
+							((Output)connectLine.connection.Item2).Input = connectLine.connection.Item1.Name;
 						else
 							add = false;
 
