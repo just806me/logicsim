@@ -173,7 +173,7 @@ namespace VinCAD.WindowsUI
         public Image Draw(Pen pen)
         {
             Draw(_graphics, pen, true);
-            return _bitmap;
+            return (Image)_bitmap.Clone();
         }
 
         public IEnumerable<IDrawableElement> GetElementsAtRectangle(Rectangle bounds) 
