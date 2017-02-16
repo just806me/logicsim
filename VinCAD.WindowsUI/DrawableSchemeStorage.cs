@@ -18,11 +18,11 @@ namespace VinCAD.WindowsUI
 
             var scheme = JsonConvert.DeserializeObject<DrawableScheme>(json);
 
-            foreach (var line in scheme.Lines)
-            {
-                line.Start = scheme.Elements.FirstOrDefault(e => e.Name == line.StartName);
-                line.End = scheme.Elements.FirstOrDefault(e => e.Name == line.EndName);
-            }
+            //foreach (var line in scheme.Lines)
+            //{
+            //    line.Start = scheme.Elements.FirstOrDefault(e => e.Name == line.StartName);
+            //    line.End = scheme.Elements.FirstOrDefault(e => e.Name == line.EndName);
+            //}
 
 			return scheme;
 		}

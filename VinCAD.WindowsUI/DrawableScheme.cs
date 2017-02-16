@@ -32,6 +32,13 @@ namespace VinCAD.WindowsUI
         [JsonIgnore]
         private List<Line> _lines;
 
+        [JsonIgnore]
+        public IEnumerable<ISelectable> Selectable => _elements.Cast<ISelectable>().Union(_lines);
+        [JsonIgnore]
+        public IEnumerable<IMoveable> Moveable => _elements.Cast<IMoveable>().Union(_lines);
+        [JsonIgnore]
+        public IEnumerable<IDrawable> Drawable => _elements.Cast<IDrawable>().Union(_lines);
+
         [JsonRequired]
         public int Width { get; private set; }
         [JsonRequired]
@@ -116,6 +123,7 @@ namespace VinCAD.WindowsUI
             }).ToArray();
 
             var drawableScheme = new DrawableScheme(drawableInputs, drawableOutputs, drawableComponents, null, width, height);
+
             drawableScheme.RestoreLines();
 
             return drawableScheme;
@@ -123,20 +131,7 @@ namespace VinCAD.WindowsUI
 
         public void RestoreLines()
         {
-            _lines.Clear();
-
-            foreach (var component in Components)
-                foreach (var input in component.Input)
-                    AddLine(new Line(
-                        _elements.FirstOrDefault(x => x.Name == input),
-                        component, new Point[0]
-                    ));
-
-            foreach (var output in Outputs)
-                AddLine(new Line(
-                    _elements.FirstOrDefault(x => x.Name == output.Input),
-                    output, new Point[0]
-                ));
+            throw new NotImplementedException();
         }
 
         public void SetSize(int width, int height)
@@ -153,16 +148,10 @@ namespace VinCAD.WindowsUI
             _graphics = Graphics.FromImage(_bitmap);
         }
 
-        public void Move(int dx, int dy)
+        public void MoveElements(int dx, int dy)
         {
             foreach (var item in _elements)
-            {
-                item.X += dx;
-                item.Y += dy;
-            }
-
-            foreach (var line in Lines)
-                line.Move(dx, dy);
+                item.Move(new Point(item.X + dx, item.Y + dy));
         }
 
         public void Draw(Graphics graphics, Pen pen, bool clear = false, Color? fillColor = null)
@@ -170,30 +159,15 @@ namespace VinCAD.WindowsUI
             if (clear)
                 graphics.Clear(fillColor ?? Color.White);
 
-            foreach (var element in _elements)
-                element.Draw(graphics, pen);
-
-            foreach (var line in Lines)
-                line.Draw(graphics, pen);
+            foreach (var item in Drawable)
+                item.Draw(graphics, pen);
         }
 
         public Image Draw(Pen pen)
         {
             Draw(_graphics, pen, true);
-            return _bitmap;
+            return _bitmap; // TODO : (Image)_bitmap.Clone()
         }
-
-        public IEnumerable<IDrawableElement> GetElementsAtRectangle(Rectangle bounds)
-            => _elements.FindAll(e => e.IsInRectangle(bounds));
-
-        public IEnumerable<IDrawableElement> GetElementsAtRectangle(int x, int y, int width, int height)
-            => _elements.FindAll(e => e.IsInRectangle(x, y, width, height));
-
-        public IDrawableElement GetElementAtLocation(Point p)
-            => _elements.Find(e => e.ContainsLocation(p));
-
-        public IDrawableElement GetElementAtLocation(int x, int y)
-            => _elements.Find(e => e.ContainsLocation(x, y));
 
         public void AddElement(IDrawableElement element) => _elements.Add(element);
 
@@ -202,7 +176,6 @@ namespace VinCAD.WindowsUI
         public void RemoveElement(IDrawableElement element)
         {
             _elements.Remove(element);
-            _lines.RemoveAll(x => x.IsConnectedTo(element));
 
             foreach (var item in _elements)
             {
@@ -221,6 +194,8 @@ namespace VinCAD.WindowsUI
                 }
             }
         }
+
+        public void RemoveLine(Line line) => _lines.Remove(line);
 
         public void Clear()
         {

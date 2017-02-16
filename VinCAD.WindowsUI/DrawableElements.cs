@@ -2,47 +2,35 @@ using VinCAD.Main;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Collections.ObjectModel;
 using System;
 
 namespace VinCAD.WindowsUI
 {
-    public interface IDrawable
+    public class OnMoveEventArgs : EventArgs
     {
-        void Draw(Graphics graphics, Pen pen);
-    }
+        public int Dx;
+        public int Dy;
 
-    public interface IDrawableElement : IDrawable, IElement
-    {
-        [JsonRequired]
-        int X { get; set; }
-        [JsonRequired]
-        int Y { get; set; }
-        [JsonRequired]
-        int Width { get; set; }
-        [JsonRequired]
-        int Height { get; set; }
-
-        bool ContainsLocation(Point p);
-        bool ContainsLocation(int x, int y);
-        bool IsInRectangle(Rectangle bounds);
-        bool IsInRectangle(int x, int y, int width, int height);
+        public OnMoveEventArgs(int dx, int dy)
+        {
+            Dx = dx;
+            Dy = dy;
+        }
     }
 
     public class DrawableComponent : Component, IDrawableElement
     {
         [JsonRequired]
-        public int Height { get; set; }
+        public int Height { get; private set; }
 
         [JsonRequired]
-        public int Width { get; set; }
+        public int Width { get; private set; }
 
         [JsonRequired]
-        public int X { get; set; }
+        public int X { get; private set; }
 
         [JsonRequired]
-        public int Y { get; set; }
+        public int Y { get; private set; }
 
         [JsonConstructor]
         public DrawableComponent(string name, ComponentType type, IEnumerable<string> input) : base(name, type, input) { }
@@ -54,6 +42,8 @@ namespace VinCAD.WindowsUI
             X = x;
             Y = y;
         }
+
+        public event EventHandler<OnMoveEventArgs> OnMove;
 
         public void Draw(Graphics graphics, Pen pen)
         {
@@ -183,30 +173,33 @@ namespace VinCAD.WindowsUI
             }
         }
 
-        public bool ContainsLocation(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
-
-        public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
+        public bool ContainsPoint(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
 
         public bool IsInRectangle(Rectangle rectangle)
             => rectangle.Contains(X, Y)
             || rectangle.Contains(X, Y + Height)
             || rectangle.Contains(X + Width, Y)
-            || rectangle.Contains(X + Width, Y + Height)
-            || rectangle.Contains(new Rectangle(X, Y, Width, Height));
+            || rectangle.Contains(X + Width, Y + Height);
 
-        public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
+        public void Move(Point moveTo)
+        {
+            OnMove?.Invoke(this, new OnMoveEventArgs(X - moveTo.X, Y - moveTo.Y));
+
+            X = moveTo.X;
+            Y = moveTo.Y;
+        }
     }
 
     public class DrawableInput : Input, IDrawableElement
     {
         [JsonRequired]
-        public int Height { get; set; }
+        public int Height { get; private set; }
         [JsonRequired]
-        public int Width { get; set; }
+        public int Width { get; private set; }
         [JsonRequired]
-        public int X { get; set; }
+        public int X { get; private set; }
         [JsonRequired]
-        public int Y { get; set; }
+        public int Y { get; private set; }
 
         [JsonConstructor]
         public DrawableInput(string name) : base(name) { }
@@ -219,36 +212,41 @@ namespace VinCAD.WindowsUI
             Y = y;
         }
 
+        public event EventHandler<OnMoveEventArgs> OnMove;
+
         public void Draw(Graphics graphics, Pen pen)
         {
             graphics.DrawRectangle(pen, X, Y, Width, Height);
             graphics.DrawString(Name, new Font("Arial", 8), new SolidBrush(pen.Color), X + Width * 0.3f, Y + Height * 0.3f);
         }
 
-        public bool ContainsLocation(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
-
-        public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
+        public bool ContainsPoint(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
 
         public bool IsInRectangle(Rectangle rectangle)
             => rectangle.Contains(X, Y)
             || rectangle.Contains(X, Y + Height)
             || rectangle.Contains(X + Width, Y)
-            || rectangle.Contains(X + Width, Y + Height)
-            || rectangle.Contains(new Rectangle(X, Y, Width, Height));
+            || rectangle.Contains(X + Width, Y + Height);
 
-        public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
+        public void Move(Point moveTo)
+        {
+            OnMove?.Invoke(this, new OnMoveEventArgs(X - moveTo.X, Y - moveTo.Y));
+
+            X = moveTo.X;
+            Y = moveTo.Y;
+        }
     }
 
     public class DrawableOutput : Output, IDrawableElement
     {
         [JsonRequired]
-        public int Height { get; set; }
+        public int Height { get; private set; }
         [JsonRequired]
-        public int Width { get; set; }
+        public int Width { get; private set; }
         [JsonRequired]
-        public int X { get; set; }
+        public int X { get; private set; }
         [JsonRequired]
-        public int Y { get; set; }
+        public int Y { get; private set; }
 
         [JsonConstructor]
         public DrawableOutput(string name, string input) : base(name, input) { }
@@ -261,100 +259,164 @@ namespace VinCAD.WindowsUI
             Y = y;
         }
 
+        public event EventHandler<OnMoveEventArgs> OnMove;
+
         public void Draw(Graphics graphics, Pen pen)
         {
             graphics.DrawRectangle(pen, X, Y, Width, Height);
             graphics.DrawString(Name, new Font("Arial", 8), new SolidBrush(pen.Color), X + Width * 0.3f, Y + Height * 0.3f);
         }
 
-        public bool ContainsLocation(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
-
-        public bool ContainsLocation(int x, int y) => new Rectangle(X, Y, Width, Height).Contains(x, y);
+        public bool ContainsPoint(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
 
         public bool IsInRectangle(Rectangle rectangle)
             => rectangle.Contains(X, Y)
             || rectangle.Contains(X, Y + Height)
             || rectangle.Contains(X + Width, Y)
-            || rectangle.Contains(X + Width, Y + Height)
-            || rectangle.Contains(new Rectangle(X, Y, Width, Height));
+            || rectangle.Contains(X + Width, Y + Height);
 
-        public bool IsInRectangle(int x, int y, int width, int height) => IsInRectangle(new Rectangle(x, y, width, height));
+        public void Move(Point moveTo)
+        {
+            OnMove?.Invoke(this, new OnMoveEventArgs(X - moveTo.X, Y - moveTo.Y));
+
+            X = moveTo.X;
+            Y = moveTo.Y;
+        }
     }
 
-    public class Line : IDrawable
+    public class Line : IDrawable, IMoveable, ISelectable
     {
-        [JsonIgnore]
-        public IDrawableElement Start { get; set; }
-        [JsonRequired]
-        public string StartName => Start.Name;
+        private IMoveable _start;
+        private IMoveable _end;
 
-        [JsonIgnore]
-        public IDrawableElement End { get; set; }
-        [JsonRequired]
-        public string EndName => End.Name;
+        public IMoveable Start
+        {
+            get { return _start; }
+            set
+            {
+                if (_start != null)
+                    _start.OnMove -= Start_OnMove;
 
-        [JsonIgnore]
-        public Point StartPoint => Start != null ? new Point(Start.X + Start.Width, Start.Y + Start.Height / 2) : new Point();
-        [JsonIgnore]
-        public Point EndPoint
+                if (value != null)
+                    value.OnMove += Start_OnMove;
+
+                _start = value;
+            }
+        }
+        public IMoveable End
+        {
+            get { return _end; }
+            set
+            {
+                if (_end != null)
+                    _end.OnMove -= End_OnMove;
+
+                if (value != null)
+                    value.OnMove += End_OnMove;
+
+                _end = value;
+            }
+        }
+
+        public Direction Direction { get; set; }
+        public int Length { get; set; }
+
+        public int X => _start.X + _start.Width;
+        public int Y => _start.Y + _start.Height;
+        public int Height
         {
             get
             {
-                if (End is Output)
-                    return new Point(End.X, End.Y + End.Height / 2);
-                else if (End is Component)
+                switch (Direction)
                 {
-                    var inputs_count = ((Component)End).Input.Count + 1f;
-                    var index = ((Component)End).Input.IndexOf(Start.Name) + 1f;
-
-                    return new Point(End.X, (int)Math.Round(End.Y + End.Height * index / inputs_count));
+                    case Direction.Y:
+                        return Length;
+                    case Direction.X:
+                    default:
+                        return 0;
                 }
-                else return new Point();
             }
         }
-        [JsonIgnore]
-        public ReadOnlyCollection<Point> AllPoints
+        public int Width
         {
             get
             {
-                var result = new List<Point>(_points.Count + 2);
-
-                result.Add(StartPoint);
-                result.AddRange(_points);
-                result.Add(EndPoint);
-
-                return result.AsReadOnly();
+                switch (Direction)
+                {
+                    case Direction.X:
+                        return Length;
+                    case Direction.Y:
+                    default:
+                        return 0;
+                }
             }
         }
 
-        [JsonIgnore]
-        private List<Point> _points;
-        [JsonRequired]
-        public ReadOnlyCollection<Point> Points => _points.AsReadOnly();
+        public event EventHandler<OnMoveEventArgs> OnMove;
 
-        [JsonConstructor]
-        public Line(string startName, string endName, IEnumerable<Point> points)
-            : this(new DrawableInput(startName), new DrawableInput(endName), points) { }
-
-        public Line(IDrawableElement start, IDrawableElement end, IEnumerable<Point> points)
+        public Line(IMoveable start, IMoveable end, Direction direction, int length)
         {
             Start = start;
             End = end;
-            _points = points.ToList();
+            Direction = direction;
+            Length = length;
         }
 
-        public void Draw(Graphics graphics, Pen pen) => graphics.DrawLines(pen, AllPoints.ToArray());
-
-        public bool IsConnectedTo(IDrawableElement element) => Start == element || End == element;
-
-        public void AddPoint(Point point) => _points.Add(point);
-
-        public void AddPoint(int x, int y) => _points.Add(new Point(x, y));
-
-        public void Move(int dx, int dy)
+        private void Start_OnMove(object sender, OnMoveEventArgs e)
         {
-            for (int i = 0; i < _points.Count; i++)
-                _points[i] = new Point(_points[i].X + dx, _points[i].Y + dy);
+            throw new NotImplementedException();
+        }
+
+        private void End_OnMove(object sender, OnMoveEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Draw(Graphics graphics, Pen pen)
+            => graphics.DrawLine(pen, X, Y, X + Width, Y + Height);
+
+        public bool ContainsPoint(Point p)
+        {
+            switch (Direction)
+            {
+                case Direction.X:
+                    return p.Y == Y && (p.X - X <= Length);
+                case Direction.Y:
+                    return p.X == X && (p.Y - Y <= Length);
+                default:
+                    return false;
+            }
+        }
+
+        public bool IsInRectangle(Rectangle bounds)
+            => bounds.Contains(X, Y)
+            || bounds.Contains(X + Width, Y + Height);
+
+        public void Move(Point moveTo)
+        {
+            OnMove?.Invoke(this, new OnMoveEventArgs(moveTo.X - X, moveTo.Y - Y));
+
+            if (_start is IDrawableElement)
+                switch (Direction)
+                {
+                    case Direction.X:
+                        ((IDrawableElement)_start).Move(new Point(moveTo.X, _start.Y));
+                        break;
+                    case Direction.Y:
+                        ((IDrawableElement)_start).Move(new Point(_start.X, moveTo.Y));
+                        break;
+                }
+
+            if (_end is IDrawableElement)
+                switch (Direction)
+                {
+                    case Direction.X:
+                        ((IDrawableElement)_end).Move(new Point(moveTo.X, _end.Y));
+                        break;
+                    case Direction.Y:
+                        ((IDrawableElement)_end).Move(new Point(_end.X, moveTo.Y));
+                        break;
+                }
         }
     }
 }

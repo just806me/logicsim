@@ -107,6 +107,7 @@
     <Compile Include="EquationDialog.Designer.cs">
       <DependentUpon>EquationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces.cs" />
     <Compile Include="Resources\Localization.uk.Designer.cs">
       <DependentUpon>Localization.uk.resx</DependentUpon>
       <AutoGen>True</AutoGen>
