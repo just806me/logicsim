@@ -166,7 +166,7 @@ namespace VinCAD.WindowsUI
         public Image Draw(Pen pen)
         {
             Draw(_graphics, pen, true);
-            return _bitmap; // TODO : (Image)_bitmap.Clone()
+            return _bitmap;
         }
 
         public void AddElement(IDrawableElement element) => _elements.Add(element);
