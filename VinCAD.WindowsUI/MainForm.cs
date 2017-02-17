@@ -5,7 +5,6 @@ using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace VinCAD.WindowsUI
 {
@@ -18,12 +17,13 @@ namespace VinCAD.WindowsUI
         private DrawableScheme scheme;
 
         private IMoveable dragElement;
+        private Point dragPrevLocation;
 
         private Line connectLine;
         private Direction connectDirection;
         private IDrawableElement connectStartElement;
 
-        private IDrawableElement menuElement;
+        private ISelectable menuElement;
 
         private bool move;
         private Point moveLastLocation;
@@ -227,6 +227,7 @@ namespace VinCAD.WindowsUI
                 {
                     modified = true;
                     dragElement = scheme.Moveable.FirstOrDefault(x => x is ISelectable && ((ISelectable)x).ContainsPoint(e.Location));
+                    dragPrevLocation = e.Location;
                 }
 
                 else if (connectLine != null)
@@ -300,7 +301,7 @@ namespace VinCAD.WindowsUI
                 {
                     modified = true;
 
-                    var toDelete = scheme.Selectable.Where(x => x.ContainsPoint(e.Location));
+                    var toDelete = scheme.Selectable.Where(x => x.ContainsPoint(e.Location)).ToArray();
                     foreach (var item in toDelete)
                         if (item is IDrawableElement)
                             scheme.RemoveElement((IDrawableElement)item);
@@ -318,8 +319,9 @@ namespace VinCAD.WindowsUI
                 dragElement = null;
                 connectLine = null;
 
-                menuElement = scheme.Elements.FirstOrDefault(x => x.ContainsPoint(e.Location));
+                menuElement = scheme.Selectable.FirstOrDefault(x => x.ContainsPoint(e.Location));
                 pictureBox.ContextMenuStrip = (menuElement == null ? schemeMenuStrip : elementMenuStrip);
+                dragPrevLocation = e.Location;
             }
         }
 
@@ -344,9 +346,15 @@ namespace VinCAD.WindowsUI
             else if (dragElement != null)
             {
                 if (!scheme.Elements.Contains(dragElement) && dragElement is IDrawableElement)
+                {
+                    ((IDrawableElement)dragElement).X = e.X;
+                    ((IDrawableElement)dragElement).Y = e.Y;
                     scheme.AddElement((IDrawableElement)dragElement);
+                }
                 else
-                    dragElement.Move(e.Location);
+                    dragElement.Move(e.X - dragPrevLocation.X, e.Y - dragPrevLocation.Y);
+
+                dragPrevLocation = e.Location;
 
                 DrawScheme();
             }
@@ -455,7 +463,11 @@ namespace VinCAD.WindowsUI
         {
             modified = true;
 
-            scheme.RemoveElement(menuElement);
+            if (menuElement is IDrawableElement)
+                scheme.RemoveElement((IDrawableElement)menuElement);
+            else if (menuElement is Line)
+                scheme.RemoveLine((Line)menuElement);
+
             DrawScheme();
             menuElement = null;
         }
@@ -527,44 +539,50 @@ namespace VinCAD.WindowsUI
 
         private void renameElementToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var dialog = new NameDialog())
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    modified = true;
-
-                    foreach (Output output in scheme.Elements.Where(x => x is Output && (x as Output).Input == menuElement.Name))
-                        output.Input = dialog.NewName;
-                    foreach (Component component in scheme.Elements.Where(x => x is Component && (x as Component).Input.Contains(menuElement.Name)))
+            if (menuElement is IDrawableElement)
+                using (var dialog = new NameDialog())
+                    if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        component.RemoveInput(menuElement.Name);
-                        component.AddInput(dialog.NewName);
-                    }
-                    menuElement.Name = dialog.NewName;
+                        modified = true;
 
-                    DrawScheme();
-                    menuElement = null;
-                }
+                        foreach (Output output in scheme.Elements.Where(x => x is Output && (x as Output).Input == ((IDrawableElement)menuElement).Name))
+                            output.Input = dialog.NewName;
+                        foreach (Component component in scheme.Elements.Where(x => x is Component && (x as Component).Input.Contains(((IDrawableElement)menuElement).Name)))
+                        {
+                            component.RemoveInput(((IDrawableElement)menuElement).Name);
+                            component.AddInput(dialog.NewName);
+                        }
+                        ((IDrawableElement)menuElement).Name = dialog.NewName;
+
+                        DrawScheme();
+                    }
+
+            menuElement = null;
         }
 
         private void moveElementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             modified = true;
 
-            toolStripButton_Click(moveButton, null);
-            dragElement = menuElement;
+            if (menuElement is IMoveable)
+            {
+                toolStripButton_Click(moveButton, null);
+                dragElement = (IMoveable)menuElement;
+            }
+
             menuElement = null;
         }
 
         private void createConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             toolStripButton_Click(connectionButton, null);
-            if (!(menuElement is Output))
+            if (menuElement is IDrawableElement && !(menuElement is Output))
             {
                 modified = true;
 
                 connectDirection = Direction.X;
-                connectStartElement = menuElement;
-                connectLine = new Line(menuElement, null, connectDirection, 0);
+                connectStartElement = (IDrawableElement)menuElement;
+                connectLine = new Line((IDrawableElement)menuElement, null, connectDirection, 0);
             }
             menuElement = null;
         }

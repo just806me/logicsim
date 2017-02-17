@@ -151,7 +151,7 @@ namespace VinCAD.WindowsUI
         public void MoveElements(int dx, int dy)
         {
             foreach (var item in _elements)
-                item.Move(new Point(item.X + dx, item.Y + dy));
+                item.Move(dx, dy);
         }
 
         public void Draw(Graphics graphics, Pen pen, bool clear = false, Color? fillColor = null)

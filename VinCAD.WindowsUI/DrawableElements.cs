@@ -21,16 +21,13 @@ namespace VinCAD.WindowsUI
     public class DrawableComponent : Component, IDrawableElement
     {
         [JsonRequired]
-        public int Height { get; private set; }
-
+        public int Height { get; set; }
         [JsonRequired]
-        public int Width { get; private set; }
-
+        public int Width { get; set; }
         [JsonRequired]
-        public int X { get; private set; }
-
+        public int X { get; set; }
         [JsonRequired]
-        public int Y { get; private set; }
+        public int Y { get; set; }
 
         [JsonConstructor]
         public DrawableComponent(string name, ComponentType type, IEnumerable<string> input) : base(name, type, input) { }
@@ -181,25 +178,25 @@ namespace VinCAD.WindowsUI
             || rectangle.Contains(X + Width, Y)
             || rectangle.Contains(X + Width, Y + Height);
 
-        public void Move(Point moveTo)
+        public void Move(int dx, int dy)
         {
-            OnMove?.Invoke(this, new OnMoveEventArgs(X - moveTo.X, Y - moveTo.Y));
+            OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy));
 
-            X = moveTo.X;
-            Y = moveTo.Y;
+            X += dx;
+            Y += dy;
         }
     }
 
     public class DrawableInput : Input, IDrawableElement
     {
         [JsonRequired]
-        public int Height { get; private set; }
+        public int Height { get; set; }
         [JsonRequired]
-        public int Width { get; private set; }
+        public int Width { get; set; }
         [JsonRequired]
-        public int X { get; private set; }
+        public int X { get; set; }
         [JsonRequired]
-        public int Y { get; private set; }
+        public int Y { get; set; }
 
         [JsonConstructor]
         public DrawableInput(string name) : base(name) { }
@@ -228,25 +225,25 @@ namespace VinCAD.WindowsUI
             || rectangle.Contains(X + Width, Y)
             || rectangle.Contains(X + Width, Y + Height);
 
-        public void Move(Point moveTo)
+        public void Move(int dx, int dy)
         {
-            OnMove?.Invoke(this, new OnMoveEventArgs(X - moveTo.X, Y - moveTo.Y));
+            OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy));
 
-            X = moveTo.X;
-            Y = moveTo.Y;
+            X += dx;
+            Y += dy;
         }
     }
 
     public class DrawableOutput : Output, IDrawableElement
     {
         [JsonRequired]
-        public int Height { get; private set; }
+        public int Height { get; set; }
         [JsonRequired]
-        public int Width { get; private set; }
+        public int Width { get; set; }
         [JsonRequired]
-        public int X { get; private set; }
+        public int X { get; set; }
         [JsonRequired]
-        public int Y { get; private set; }
+        public int Y { get; set; }
 
         [JsonConstructor]
         public DrawableOutput(string name, string input) : base(name, input) { }
@@ -275,12 +272,12 @@ namespace VinCAD.WindowsUI
             || rectangle.Contains(X + Width, Y)
             || rectangle.Contains(X + Width, Y + Height);
 
-        public void Move(Point moveTo)
+        public void Move(int dx, int dy)
         {
-            OnMove?.Invoke(this, new OnMoveEventArgs(X - moveTo.X, Y - moveTo.Y));
+            OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy));
 
-            X = moveTo.X;
-            Y = moveTo.Y;
+            X += dx;
+            Y += dy;
         }
     }
 
@@ -364,12 +361,48 @@ namespace VinCAD.WindowsUI
 
         private void Start_OnMove(object sender, OnMoveEventArgs e)
         {
-            throw new NotImplementedException();
+            switch (Direction)
+            {
+                case Direction.X:
+                    Length -= e.Dx;
+
+                    if (_end is Line)
+                        ((Line)_end).Length -= e.Dy;
+                    else if (_end is IDrawableElement)
+                        ((IDrawableElement)_end).Y += e.Dy;
+                    break;
+                case Direction.Y:
+                    Length -= e.Dy;
+
+                    if (_end is Line)
+                        ((Line)_end).Length -= e.Dx;
+                    else if (_end is IDrawableElement)
+                        ((IDrawableElement)_end).X += e.Dx;
+                    break;
+            }
         }
 
         private void End_OnMove(object sender, OnMoveEventArgs e)
         {
-            throw new NotImplementedException();
+            switch (Direction)
+            {
+                case Direction.X:
+                    Length += e.Dx;
+
+                    if (_start is Line)
+                        ((Line)_start).Length += e.Dy;
+                    else if (_start is IDrawableElement)
+                        ((IDrawableElement)_start).Y += e.Dy;
+                    break;
+                case Direction.Y:
+                    Length += e.Dy;
+
+                    if (_start is Line)
+                        ((Line)_start).Length += e.Dx;
+                    else if (_start is IDrawableElement)
+                        ((IDrawableElement)_start).X += e.Dx;
+                    break;
+            }
         }
 
         public void Draw(Graphics graphics, Pen pen)
@@ -379,6 +412,7 @@ namespace VinCAD.WindowsUI
         {
             switch (Direction)
             {
+                // TODO: Fix false if length < 0.
                 case Direction.X:
                     return p.Y == Y && (p.X - X <= Length);
                 case Direction.Y:
@@ -392,31 +426,43 @@ namespace VinCAD.WindowsUI
             => bounds.Contains(X, Y)
             || bounds.Contains(X + Width, Y + Height);
 
-        public void Move(Point moveTo)
+        public void Move(int dx, int dy)
         {
-            OnMove?.Invoke(this, new OnMoveEventArgs(moveTo.X - X, moveTo.Y - Y));
+            OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy));
 
             if (_start is IDrawableElement)
-                switch (Direction)
-                {
-                    case Direction.X:
-                        ((IDrawableElement)_start).Move(new Point(moveTo.X, _start.Y));
-                        break;
-                    case Direction.Y:
-                        ((IDrawableElement)_start).Move(new Point(_start.X, moveTo.Y));
-                        break;
-                }
+            {
+                ((IDrawableElement)_start).X += dx;
+                ((IDrawableElement)_start).Y += dy;
+            }
 
             if (_end is IDrawableElement)
-                switch (Direction)
-                {
-                    case Direction.X:
-                        ((IDrawableElement)_end).Move(new Point(moveTo.X, _end.Y));
-                        break;
-                    case Direction.Y:
-                        ((IDrawableElement)_end).Move(new Point(_end.X, moveTo.Y));
-                        break;
-                }
+            {
+                ((IDrawableElement)_end).X += dx;
+                ((IDrawableElement)_end).Y += dy;
+            }
+
+            //if (_start is IDrawableElement)
+            //    switch (Direction)
+            //    {
+            //        case Direction.X:
+            //            ((IDrawableElement)_start).Move(new Point(moveTo.X, _start.Y));
+            //            break;
+            //        case Direction.Y:
+            //            ((IDrawableElement)_start).Move(new Point(_start.X, moveTo.Y));
+            //            break;
+            //    }
+
+            //if (_end is IDrawableElement)
+            //    switch (Direction)
+            //    {
+            //        case Direction.X:
+            //            ((IDrawableElement)_end).Move(new Point(moveTo.X, _end.Y));
+            //            break;
+            //        case Direction.Y:
+            //            ((IDrawableElement)_end).Move(new Point(_end.X, moveTo.Y));
+            //            break;
+            //    }
         }
     }
 }

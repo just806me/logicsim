@@ -18,7 +18,7 @@ namespace VinCAD.WindowsUI
         int Width { get; }
         int Height { get; }
 
-        void Move(Point moveTo);
+        void Move(int dx, int dy);
         event EventHandler<OnMoveEventArgs> OnMove;
     }
 
@@ -28,5 +28,11 @@ namespace VinCAD.WindowsUI
         bool IsInRectangle(Rectangle bounds);
     }
 
-    public interface IDrawableElement : IElement, IDrawable, IMoveable, ISelectable { }
+    public interface IDrawableElement : IElement, IDrawable, IMoveable, ISelectable
+    {
+        new int X { get; set; }
+        new int Y { get; set; }
+        new int Width { get; set; }
+        new int Height { get; set; }
+    }
 }
