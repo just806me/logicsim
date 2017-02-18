@@ -45,8 +45,10 @@ namespace VinCAD.WindowsUI
 			connectLine = null;
 			menuElement = null;
 			move = false;
+            scheme?.Dispose();
+            scheme = null;
 
-			if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
 			{
 				scheme = new DrawableScheme(pictureBox.Width, pictureBox.Height);
                 filename = null;
@@ -78,6 +80,7 @@ namespace VinCAD.WindowsUI
 			connectLine = null;
 			menuElement = null;
 			move = false;
+            scheme?.Dispose();
 
 			scheme = DrawableScheme.FromScheme(source, pictureBox.Width, pictureBox.Height);
 
