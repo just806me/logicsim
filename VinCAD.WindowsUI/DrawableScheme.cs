@@ -211,11 +211,7 @@ namespace VinCAD.WindowsUI
 
         public void Clear() => _elements.Clear();
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        public void Dispose() => Dispose(true);
 
         protected virtual void Dispose(bool disposing)
         {
