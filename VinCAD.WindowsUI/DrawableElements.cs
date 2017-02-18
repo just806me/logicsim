@@ -431,9 +431,9 @@ namespace VinCAD.WindowsUI
             switch (Direction)
             {
                 case Direction.X:
-                    return p.Y == Y && (Length >= 0 ? p.X - X <= Length : p.X - X >= Length);
+                    return p.Y == Y && (Length >= 0 ? p.X - X <= Length && p.X - X > 0 : p.X - X >= Length && p.X - X < 0);
                 case Direction.Y:
-                    return p.X == X && (Length >= 0 ? p.Y - Y <= Length : p.Y - Y >= Length);
+                    return p.X == X && (Length >= 0 ? p.Y - Y <= Length && p.Y - Y > 0 : p.Y - Y >= Length && p.Y - Y < 0);
                 default:
                     return false;
             }
