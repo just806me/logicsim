@@ -292,7 +292,7 @@ namespace VinCAD.WindowsUI
             Y += dy;
         }
     }
-
+    
     public class Line : IDrawable, IMoveable, ISelectable
     {
         private IMoveable _start;
@@ -330,8 +330,8 @@ namespace VinCAD.WindowsUI
         public Direction Direction { get; set; }
         public int Length { get; set; }
 
-        public int X => _start is IDrawableElement ? _start.X + _start.Width / 2 : _start.X + _start.Width;
-        public int Y => _start is IDrawableElement ? _start.Y + _start.Height / 2 : _start.Y + _start.Height;
+        public int X => Start is IDrawableElement ? Start.X + Start.Width / 2 : Start.X + Start.Width;
+        public int Y => Start is IDrawableElement ? Start.Y + Start.Height / 2 : Start.Y + Start.Height;
         public int Height
         {
             get
@@ -378,18 +378,18 @@ namespace VinCAD.WindowsUI
                 case Direction.X:
                     Length -= e.Dx;
 
-                    if (_end is Line)
-                        ((Line)_end).Length -= e.Dy;
-                    else if (_end is IDrawableElement)
-                        ((IDrawableElement)_end).Y += e.Dy;
+                    if (End is Line)
+                        ((Line)End).Length -= e.Dy;
+                    else if (End is IDrawableElement)
+                        ((IDrawableElement)End).Y += e.Dy;
                     break;
                 case Direction.Y:
                     Length -= e.Dy;
 
-                    if (_end is Line)
-                        ((Line)_end).Length -= e.Dx;
-                    else if (_end is IDrawableElement)
-                        ((IDrawableElement)_end).X += e.Dx;
+                    if (End is Line)
+                        ((Line)End).Length -= e.Dx;
+                    else if (End is IDrawableElement)
+                        ((IDrawableElement)End).X += e.Dx;
                     break;
             }
         }
@@ -401,18 +401,18 @@ namespace VinCAD.WindowsUI
                 case Direction.X:
                     Length += e.Dx;
 
-                    if (_start is Line)
-                        ((Line)_start).Length += e.Dy;
-                    else if (_start is IDrawableElement)
-                        ((IDrawableElement)_start).Y += e.Dy;
+                    if (Start is Line)
+                        ((Line)Start).Length += e.Dy;
+                    else if (Start is IDrawableElement)
+                        ((IDrawableElement)Start).Y += e.Dy;
                     break;
                 case Direction.Y:
                     Length += e.Dy;
 
-                    if (_start is Line)
-                        ((Line)_start).Length += e.Dx;
-                    else if (_start is IDrawableElement)
-                        ((IDrawableElement)_start).X += e.Dx;
+                    if (Start is Line)
+                        ((Line)Start).Length += e.Dx;
+                    else if (Start is IDrawableElement)
+                        ((IDrawableElement)Start).X += e.Dx;
                     break;
             }
         }
@@ -441,16 +441,16 @@ namespace VinCAD.WindowsUI
         {
             OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy));
 
-            if (_start is IDrawableElement)
+            if (Start is IDrawableElement)
             {
-                ((IDrawableElement)_start).X += dx;
-                ((IDrawableElement)_start).Y += dy;
+                ((IDrawableElement)Start).X += dx;
+                ((IDrawableElement)Start).Y += dy;
             }
 
-            if (_end is IDrawableElement)
+            if (End is IDrawableElement)
             {
-                ((IDrawableElement)_end).X += dx;
-                ((IDrawableElement)_end).Y += dy;
+                ((IDrawableElement)End).X += dx;
+                ((IDrawableElement)End).Y += dy;
             }
         }
     }
