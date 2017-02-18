@@ -221,6 +221,9 @@ namespace VinCAD.WindowsUI
                     _graphics.Dispose();
                 if (_bitmap != null)
                     _bitmap?.Dispose();
+
+                foreach (var line in _lines)
+                    line.Dispose();
             }
         }
     }
