@@ -37,7 +37,7 @@ namespace VinCAD.WindowsUI
         [JsonIgnore]
         public IEnumerable<IMoveable> Moveable => _elements.Cast<IMoveable>().Union(_lines);
         [JsonIgnore]
-        public IEnumerable<IDrawable> Drawable => _elements.Cast<IDrawable>().Union(_lines);
+        public IEnumerable<IDrawable> Drawable => _lines.Cast<IDrawable>().Union(_elements);
 
         [JsonRequired]
         public int Width { get; private set; }

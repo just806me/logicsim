@@ -20,7 +20,6 @@ namespace VinCAD.WindowsUI
         private Point dragPrevLocation;
 
         private Line connectLine;
-        private Direction connectDirection;
         private IDrawableElement connectStartElement;
 
         private ISelectable menuElement;
@@ -232,7 +231,9 @@ namespace VinCAD.WindowsUI
 
                 else if (connectLine != null)
                 {
-                    var underMouseElement = scheme.Elements.FirstOrDefault(x => x.ContainsPoint(e.Location));
+                    var underMouseElement = scheme.Elements.FirstOrDefault(
+                        x => x.ContainsPoint(new Point(connectLine.X + connectLine.Width, connectLine.Y + connectLine.Height))
+                    );
                     if (underMouseElement != null && underMouseElement != connectLine.Start)
                     {
                         var add = !scheme.Lines.Contains(connectLine);
@@ -246,15 +247,6 @@ namespace VinCAD.WindowsUI
 
                         if (add)
                         {
-                            switch (connectDirection)
-                            {
-                                case Direction.X:
-                                    connectLine.Length = e.X - connectLine.X;
-                                    break;
-                                case Direction.Y:
-                                    connectLine.Length = e.Y - connectLine.Y;
-                                    break;
-                            }
                             connectLine.End = underMouseElement;
 
                             scheme.AddLine(connectLine);
@@ -264,19 +256,28 @@ namespace VinCAD.WindowsUI
                     }
                     else
                     {
-                        switch (connectDirection)
+                        if (connectLine.Start is Line && connectLine.Direction == ((Line)connectLine.Start).Direction)
+                        {
+                            ((Line)connectLine.Start).Length += connectLine.Length;
+                            connectLine = ((Line)connectLine.Start);
+                            connectLine.End = null;
+                        }
+
+                        Line line;
+
+                        switch (connectLine.Direction)
                         {
                             case Direction.X:
-                                connectLine.Length = e.X - connectLine.X;
+                                line = new Line(connectLine, null, Direction.Y, 0);
                                 break;
                             case Direction.Y:
-                                connectLine.Length = e.Y - connectLine.Y;
+                                line = new Line(connectLine, null, Direction.X, 0);
+                                break;
+                            default:
+                                line = null;
                                 break;
                         }
 
-                        connectDirection = connectDirection == Direction.X ? Direction.Y : Direction.X;
-
-                        var line = new Line(connectLine, null, connectDirection, 0);
                         connectLine.End = line;
                         scheme.AddLine(connectLine);
                         connectLine = line;
@@ -291,9 +292,8 @@ namespace VinCAD.WindowsUI
                     {
                         modified = true;
 
-                        connectDirection = Direction.X;
                         connectStartElement = underMouseElement;
-                        connectLine = new Line(underMouseElement, null, connectDirection, 0);
+                        connectLine = new Line(underMouseElement, null, Direction.X, 0);
                     }
                 }
 
@@ -360,22 +360,28 @@ namespace VinCAD.WindowsUI
             }
             else if (connectLine != null)
             {
-                var image = scheme.Draw(mainPen);
+                var dx = e.X - connectLine.X;
+                var dy = e.Y - connectLine.Y;
 
-                switch (connectDirection)
+                if (Math.Abs(dy) > Math.Abs(dx))
                 {
-                    case Direction.X:
-                        connectLine.Length = e.X - connectLine.X;
-                        break;
-                    case Direction.Y:
-                        connectLine.Length = e.Y - connectLine.Y;
-                        break;
+                    connectLine.Direction = Direction.Y;
+                    connectLine.Length = dy;
+                }
+                else
+                {
+                    connectLine.Direction = Direction.X;
+                    connectLine.Length = dx;
                 }
 
+                using (var image = new Bitmap(pictureBox.Width, pictureBox.Height))
                 using (var graphics = Graphics.FromImage(image))
+                {
                     connectLine.Draw(graphics, mainPen);
+                    scheme.Draw(graphics, mainPen);
 
-                pictureBox.Image = image;
+                    pictureBox.Image = (Image)image.Clone();
+                }
             }
         }
 
@@ -580,9 +586,8 @@ namespace VinCAD.WindowsUI
             {
                 modified = true;
 
-                connectDirection = Direction.X;
                 connectStartElement = (IDrawableElement)menuElement;
-                connectLine = new Line((IDrawableElement)menuElement, null, connectDirection, 0);
+                connectLine = new Line((IDrawableElement)menuElement, null, Direction.X, 0);
             }
             menuElement = null;
         }
