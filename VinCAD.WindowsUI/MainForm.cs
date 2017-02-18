@@ -17,10 +17,10 @@ namespace VinCAD.WindowsUI
         private DrawableScheme scheme;
 
         private IMoveable dragElement;
+        private Line dragLine;
         private Point dragPrevLocation;
 
         private Line connectLine;
-        private IDrawableElement connectStartElement;
 
         private ISelectable menuElement;
 
@@ -221,33 +221,41 @@ namespace VinCAD.WindowsUI
                     )));
                     if (overflowElements.Count() == 0 || (overflowElements.Count() == 1 && overflowElements.Contains(dragElement)))
                         dragElement = null;
+
+                    DrawScheme();
+                }
+                else if (dragLine != null)
+                {
+                    dragLine = null;
+                    DrawScheme();
                 }
                 else if (moveButton.Checked)
                 {
                     modified = true;
                     dragElement = scheme.Moveable.FirstOrDefault(x => x is ISelectable && ((ISelectable)x).ContainsPoint(e.Location));
+                    if (dragElement == null)
+                        dragLine = scheme.Lines.FirstOrDefault(x => x.ContainsPoint(e.Location));
                     dragPrevLocation = e.Location;
                 }
 
                 else if (connectLine != null)
                 {
-                    var underMouseElement = scheme.Elements.FirstOrDefault(
-                        x => x.ContainsPoint(new Point(connectLine.X + connectLine.Width, connectLine.Y + connectLine.Height))
-                    );
+                    var underMouseElement = scheme.Elements.FirstOrDefault(x => x.ContainsPoint(e.Location));
                     if (underMouseElement != null && underMouseElement != connectLine.Start)
                     {
                         var add = !scheme.Lines.Contains(connectLine);
 
                         if (underMouseElement is Component)
-                            ((Component)underMouseElement).AddInput(connectStartElement.Name);
+                            ((Component)underMouseElement).AddInput(connectLine.StartName);
                         else if (underMouseElement is Output && ((Output)underMouseElement).Input == string.Empty)
-                            ((Output)underMouseElement).Input = connectStartElement.Name;
+                            ((Output)underMouseElement).Input = connectLine.StartName;
                         else
                             add = false;
 
                         if (add)
                         {
                             connectLine.End = underMouseElement;
+                            connectLine.AddLineSegmentAtPoint(e.Location, true);
 
                             scheme.AddLine(connectLine);
                             DrawScheme();
@@ -256,32 +264,7 @@ namespace VinCAD.WindowsUI
                     }
                     else
                     {
-                        if (connectLine.Start is Line && connectLine.Direction == ((Line)connectLine.Start).Direction)
-                        {
-                            ((Line)connectLine.Start).Length += connectLine.Length;
-                            connectLine = ((Line)connectLine.Start);
-                            connectLine.End = null;
-                        }
-
-                        Line line;
-
-                        switch (connectLine.Direction)
-                        {
-                            case Direction.X:
-                                line = new Line(connectLine, null, Direction.Y, 0);
-                                break;
-                            case Direction.Y:
-                                line = new Line(connectLine, null, Direction.X, 0);
-                                break;
-                            default:
-                                line = null;
-                                break;
-                        }
-
-                        connectLine.End = line;
-                        scheme.AddLine(connectLine);
-                        connectLine = line;
-
+                        connectLine.AddLineSegmentAtPoint(e.Location, false);
                         DrawScheme();
                     }
                 }
@@ -291,9 +274,7 @@ namespace VinCAD.WindowsUI
                     if (underMouseElement != null && !(underMouseElement is Output))
                     {
                         modified = true;
-
-                        connectStartElement = underMouseElement;
-                        connectLine = new Line(underMouseElement, null, Direction.X, 0);
+                        connectLine = new Line(underMouseElement, null);
                     }
                 }
 
@@ -351,33 +332,26 @@ namespace VinCAD.WindowsUI
                     ((IDrawableElement)dragElement).Y = e.Y;
                     scheme.AddElement((IDrawableElement)dragElement);
                 }
-                else
-                    dragElement.Move(e.X - dragPrevLocation.X, e.Y - dragPrevLocation.Y);
+                else if (!dragElement.Move(e.X - dragPrevLocation.X, e.Y - dragPrevLocation.Y))
+                    dragElement = null;
 
                 dragPrevLocation = e.Location;
+                DrawScheme();
+            }
+            else if (dragLine != null)
+            {
+                if (!dragLine.MoveSegment(e.X - dragPrevLocation.X, e.Y - dragPrevLocation.Y, dragPrevLocation))
+                    dragLine = null;
 
+                dragPrevLocation = e.Location;
                 DrawScheme();
             }
             else if (connectLine != null)
             {
-                var dx = e.X - connectLine.X;
-                var dy = e.Y - connectLine.Y;
-
-                if (Math.Abs(dy) > Math.Abs(dx))
-                {
-                    connectLine.Direction = Direction.Y;
-                    connectLine.Length = dy;
-                }
-                else
-                {
-                    connectLine.Direction = Direction.X;
-                    connectLine.Length = dx;
-                }
-
                 using (var image = new Bitmap(pictureBox.Width, pictureBox.Height))
                 using (var graphics = Graphics.FromImage(image))
                 {
-                    connectLine.Draw(graphics, mainPen);
+                    connectLine.DrawWithTempPoint(graphics, mainPen, e.Location);
                     scheme.Draw(graphics, mainPen);
 
                     pictureBox.Image = (Image)image.Clone();
@@ -405,12 +379,7 @@ namespace VinCAD.WindowsUI
                             })
                             .Max() : 0);
 
-                        dragElement = new DrawableInput(
-                            $"x{max_input_number + 1}",
-                            0, 0,
-                            DrawableScheme.ElementWidth,
-                            DrawableScheme.ElementHeight
-                        );
+                        dragElement = new DrawableInput($"x{max_input_number + 1}", 0, 0);
                     }
                     break;
                 case "Output":
@@ -426,13 +395,7 @@ namespace VinCAD.WindowsUI
                             })
                             .Max() : 0);
 
-                        dragElement = new DrawableOutput(
-                            $"y{max_output_number + 1}",
-                            string.Empty,
-                            0, 0,
-                            DrawableScheme.ElementWidth,
-                            DrawableScheme.ElementHeight
-                        );
+                        dragElement = new DrawableOutput($"y{max_output_number + 1}", string.Empty, 0, 0);
                     }
                     break;
                 default:
@@ -455,9 +418,7 @@ namespace VinCAD.WindowsUI
                                 $"c{max_component_number + 1}",
                                 componentType,
                                 new string[] { },
-                                0, 0,
-                                DrawableScheme.ElementWidth,
-                                DrawableScheme.ElementHeight
+                                0, 0
                             );
                         }
                     }
@@ -585,9 +546,7 @@ namespace VinCAD.WindowsUI
             if (menuElement is IDrawableElement && !(menuElement is Output))
             {
                 modified = true;
-
-                connectStartElement = (IDrawableElement)menuElement;
-                connectLine = new Line((IDrawableElement)menuElement, null, Direction.X, 0);
+                connectLine = new Line((IDrawableElement)menuElement, null);
             }
             menuElement = null;
         }

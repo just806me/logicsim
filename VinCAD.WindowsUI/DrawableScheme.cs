@@ -35,7 +35,7 @@ namespace VinCAD.WindowsUI
         [JsonIgnore]
         public IEnumerable<ISelectable> Selectable => _elements.Cast<ISelectable>().Union(_lines);
         [JsonIgnore]
-        public IEnumerable<IMoveable> Moveable => _elements.Cast<IMoveable>().Union(_lines);
+        public IEnumerable<IMoveable> Moveable => _elements.Cast<IMoveable>();
         [JsonIgnore]
         public IEnumerable<IDrawable> Drawable => _lines.Cast<IDrawable>().Union(_elements);
 
@@ -92,7 +92,7 @@ namespace VinCAD.WindowsUI
 
             var drawableInputs = scheme.Inputs.Select(i =>
             {
-                var input = new DrawableInput(i.Name, elementX, elementY, ElementWidth, ElementHeight);
+                var input = new DrawableInput(i.Name, elementX, elementY);
                 elementY += GapHeight + ElementHeight;
                 return input;
             }).ToArray();
@@ -106,7 +106,7 @@ namespace VinCAD.WindowsUI
             {
                 drawableComponents.AddRange(layer.Select(c =>
                 {
-                    var component = new DrawableComponent(c.Name, c.Type, c.Input, elementX, elementY, ElementWidth, ElementHeight);
+                    var component = new DrawableComponent(c.Name, c.Type, c.Input, elementX, elementY);
                     elementY += GapHeight + ElementHeight;
                     return component;
                 }).ToArray());
@@ -117,7 +117,7 @@ namespace VinCAD.WindowsUI
 
             var drawableOutputs = scheme.Outputs.Select(o =>
             {
-                var output = new DrawableOutput(o.Name, o.Input, elementX, elementY, ElementWidth, ElementHeight);
+                var output = new DrawableOutput(o.Name, o.Input, elementX, elementY);
                 elementY += GapHeight + ElementHeight;
                 return output;
             }).ToArray();
