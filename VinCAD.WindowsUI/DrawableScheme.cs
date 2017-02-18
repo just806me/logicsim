@@ -195,7 +195,11 @@ namespace VinCAD.WindowsUI
             }
         }
 
-        public void RemoveLine(Line line) => _lines.Remove(line);
+        public void RemoveLine(Line line)
+        {
+            _lines.Remove(line);
+            line.Dispose();
+        }
 
         public void Clear()
         {

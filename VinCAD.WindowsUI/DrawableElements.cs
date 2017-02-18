@@ -292,8 +292,10 @@ namespace VinCAD.WindowsUI
             Y += dy;
         }
     }
-    
-    public class Line : IDrawable, IMoveable, ISelectable
+
+    // Memory leak when deleting line. Dispose() possibly fixes it.
+    // TODO: Fix memory leak.
+    public class Line : IDrawable, IMoveable, ISelectable, IDisposable
     {
         private IMoveable _start;
         private IMoveable _end;
@@ -304,6 +306,8 @@ namespace VinCAD.WindowsUI
             set
             {
                 if (_start != null)
+                    // But if _start is Line, _start.End keeps ref to this and _start is subscribed to this's event.
+                    // Though if do _start.End = null, that will call our's Start = null leading to continious calls.
                     _start.OnMove -= Start_OnMove;
 
                 if (value != null)
@@ -318,6 +322,8 @@ namespace VinCAD.WindowsUI
             set
             {
                 if (_end != null)
+                    // But if _end is Line, _end.Start keeps ref to this and _end is subscribed to this's event.
+                    // Though if do _end.Start = null, that will call our's End = null leading to continious calls.
                     _end.OnMove -= End_OnMove;
 
                 if (value != null)
@@ -451,6 +457,17 @@ namespace VinCAD.WindowsUI
             {
                 ((IDrawableElement)End).X += dx;
                 ((IDrawableElement)End).Y += dy;
+            }
+        }
+
+        public void Dispose() => Dispose(true);
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Start = null;
+                End = null;
             }
         }
     }
