@@ -32,6 +32,9 @@ namespace VinCAD.WindowsUI
         [JsonRequired]
         public int Y { get; set; }
 
+        [JsonIgnore]
+        public bool IsSelected { get; set; }
+
         [JsonConstructor]
         public DrawableComponent(string name, ComponentType type, IEnumerable<string> input) : base(name, type, input) { }
 
@@ -45,6 +48,9 @@ namespace VinCAD.WindowsUI
 
         public void Draw(Graphics graphics, Pen pen)
         {
+            if (IsSelected)
+                pen.Color = Color.Red;
+
             using (var path = new GraphicsPath())
             {
                 switch (Type)
@@ -211,6 +217,9 @@ namespace VinCAD.WindowsUI
         [JsonRequired]
         public int Y { get; set; }
 
+        [JsonIgnore]
+        public bool IsSelected { get; set; }
+
         [JsonConstructor]
         public DrawableInput(string name) : base(name) { }
 
@@ -224,9 +233,12 @@ namespace VinCAD.WindowsUI
 
         public void Draw(Graphics graphics, Pen pen)
         {
+            if (IsSelected)
+                pen.Color = Color.Red;
+
             graphics.FillRectangle(Brushes.White, X, Y, Width, Height);
             graphics.DrawRectangle(pen, X, Y, Width, Height);
-            graphics.DrawString(Name, new Font("Arial", 8), new SolidBrush(pen.Color), X + Width * 0.3f, Y + Height * 0.3f);
+            graphics.DrawString(Name, SystemFonts.DefaultFont, new SolidBrush(pen.Color), X + Width * 0.3f, Y + Height * 0.3f);
         }
 
         public bool ContainsPoint(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
@@ -259,6 +271,9 @@ namespace VinCAD.WindowsUI
         [JsonRequired]
         public int Y { get; set; }
 
+        [JsonIgnore]
+        public bool IsSelected { get; set; }
+
         [JsonConstructor]
         public DrawableOutput(string name, string input) : base(name, input) { }
 
@@ -272,9 +287,12 @@ namespace VinCAD.WindowsUI
 
         public void Draw(Graphics graphics, Pen pen)
         {
+            if (IsSelected)
+                pen.Color = Color.Red;
+
             graphics.FillRectangle(Brushes.White, X, Y, Width, Height);
             graphics.DrawRectangle(pen, X, Y, Width, Height);
-            graphics.DrawString(Name, new Font("Arial", 8), new SolidBrush(pen.Color), X + Width * 0.3f, Y + Height * 0.3f);
+            graphics.DrawString(Name, SystemFonts.DefaultFont, new SolidBrush(pen.Color), X + Width * 0.3f, Y + Height * 0.3f);
         }
 
         public bool ContainsPoint(Point p) => new Rectangle(X, Y, Width, Height).Contains(p);
@@ -378,6 +396,9 @@ namespace VinCAD.WindowsUI
             }
         }
 
+        [JsonIgnore]
+        public bool IsSelected { get; set; }
+
         [JsonConstructor]
         public Line(string startName, string endName, IEnumerable<LineSegment> segments)
         {
@@ -414,6 +435,9 @@ namespace VinCAD.WindowsUI
 
         public void Draw(Graphics graphics, Pen pen)
         {
+            if (IsSelected)
+                pen.Color = Color.Red;
+
             using (var path = Path)
                 graphics.DrawPath(pen, path);
         }

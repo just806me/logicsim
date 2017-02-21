@@ -44,9 +44,15 @@ namespace VinCAD.WindowsUI
 
         private void LoadScheme(string path)
         {
+            if (dragElement != null)
+                ((ISelectable)dragElement).IsSelected = false;
+            if (dragLine != null)
+                dragLine.IsSelected = false;
+
             filename = path;
             modified = false;
             dragElement = null;
+            dragLine = null;
             connectLine = null;
             menuElement = null;
             move = false;
@@ -77,9 +83,15 @@ namespace VinCAD.WindowsUI
 
         private void LoadScheme(Scheme source)
         {
+            if (dragElement != null)
+                ((ISelectable)dragElement).IsSelected = false;
+            if (dragLine != null)
+                dragLine.IsSelected = false;
+
             filename = null;
             modified = false;
             dragElement = null;
+            dragLine = null;
             connectLine = null;
             menuElement = null;
             move = false;
@@ -89,7 +101,7 @@ namespace VinCAD.WindowsUI
             DrawScheme();
         }
 
-        private void DrawScheme() => pictureBox.Image = scheme.Draw(mainPen);
+        private void DrawScheme() => pictureBox.Image = scheme.Draw((Pen)mainPen.Clone());
 
         private static void ShowError(string message, Exception exception)
         {
@@ -220,12 +232,16 @@ namespace VinCAD.WindowsUI
                         dragElement.Height
                     )));
                     if (overflowElements.Count() == 0 || (overflowElements.Count() == 1 && overflowElements.Contains(dragElement)))
+                    {
+                        ((ISelectable)dragElement).IsSelected = false;
                         dragElement = null;
+                    }
 
                     DrawScheme();
                 }
                 else if (dragLine != null)
                 {
+                    dragLine.IsSelected = false;
                     dragLine = null;
                     DrawScheme();
                 }
@@ -233,8 +249,12 @@ namespace VinCAD.WindowsUI
                 {
                     modified = true;
                     dragElement = scheme.Moveable.FirstOrDefault(x => x is ISelectable && ((ISelectable)x).ContainsPoint(e.Location));
-                    if (dragElement == null)
+                    if (dragElement != null)
+                        ((ISelectable)dragElement).IsSelected = true;
+                    else
                         dragLine = scheme.Lines.FirstOrDefault(x => x.ContainsPoint(e.Location));
+                    if (dragLine != null)
+                        dragLine.IsSelected = true;
                     dragPrevLocation = e.Location;
                 }
 
@@ -296,8 +316,13 @@ namespace VinCAD.WindowsUI
             {
                 if (connectLine != null)
                     DrawScheme();
+                if (dragElement != null)
+                    ((ISelectable)dragElement).IsSelected = false;
+                if (dragLine != null)
+                    dragLine.IsSelected = false;
 
                 dragElement = null;
+                dragLine = null;
                 connectLine = null;
 
                 menuElement = scheme.Selectable.FirstOrDefault(x => x.ContainsPoint(e.Location));
@@ -333,7 +358,11 @@ namespace VinCAD.WindowsUI
                     scheme.AddElement((IDrawableElement)dragElement);
                 }
                 else if (!dragElement.Move(e.X - dragPrevLocation.X, e.Y - dragPrevLocation.Y))
+                {
+                    ((ISelectable)dragElement).IsSelected = false;
                     dragElement = null;
+                }
+
 
                 dragPrevLocation = e.Location;
                 DrawScheme();
@@ -341,7 +370,10 @@ namespace VinCAD.WindowsUI
             else if (dragLine != null)
             {
                 if (!dragLine.MoveSegment(e.X - dragPrevLocation.X, e.Y - dragPrevLocation.Y, dragPrevLocation))
+                {
+                    dragLine.IsSelected = false;
                     dragLine = null;
+                }
 
                 dragPrevLocation = e.Location;
                 DrawScheme();
@@ -351,8 +383,8 @@ namespace VinCAD.WindowsUI
                 using (var image = new Bitmap(pictureBox.Width, pictureBox.Height))
                 using (var graphics = Graphics.FromImage(image))
                 {
-                    connectLine.DrawWithTempPoint(graphics, mainPen, e.Location);
-                    scheme.Draw(graphics, mainPen);
+                    connectLine.DrawWithTempPoint(graphics, (Pen)mainPen.Clone(), e.Location);
+                    scheme.Draw(graphics, (Pen)mainPen.Clone());
 
                     pictureBox.Image = (Image)image.Clone();
                 }
@@ -379,7 +411,7 @@ namespace VinCAD.WindowsUI
                             })
                             .Max() : 0);
 
-                        dragElement = new DrawableInput($"x{max_input_number + 1}", 0, 0);
+                        dragElement = new DrawableInput($"x{max_input_number + 1}", 0, 0) { IsSelected = true };
                     }
                     break;
                 case "Output":
@@ -395,7 +427,7 @@ namespace VinCAD.WindowsUI
                             })
                             .Max() : 0);
 
-                        dragElement = new DrawableOutput($"y{max_output_number + 1}", string.Empty, 0, 0);
+                        dragElement = new DrawableOutput($"y{max_output_number + 1}", string.Empty, 0, 0) { IsSelected = true };
                     }
                     break;
                 default:
@@ -419,7 +451,8 @@ namespace VinCAD.WindowsUI
                                 componentType,
                                 new string[] { },
                                 0, 0
-                            );
+                            )
+                            { IsSelected = true };
                         }
                     }
                     break;
@@ -498,7 +531,7 @@ namespace VinCAD.WindowsUI
         private void printToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var doc = new PrintDocument();
-            doc.PrintPage += (s, args) => scheme.Draw(args.Graphics, mainPen);
+            doc.PrintPage += (s, args) => scheme.Draw(args.Graphics, (Pen)mainPen.Clone());
             printDialog.Document = doc;
             if (printDialog.ShowDialog() == DialogResult.OK)
                 doc.Print();
@@ -535,6 +568,8 @@ namespace VinCAD.WindowsUI
             {
                 toolStripButton_Click(moveButton, null);
                 dragElement = (IMoveable)menuElement;
+                if (dragElement is ISelectable)
+                    ((ISelectable)dragElement).IsSelected = false;
             }
 
             menuElement = null;

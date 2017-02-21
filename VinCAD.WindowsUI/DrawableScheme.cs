@@ -160,7 +160,7 @@ namespace VinCAD.WindowsUI
                 graphics.Clear(fillColor ?? Color.White);
 
             foreach (var item in Drawable)
-                item.Draw(graphics, pen);
+                item.Draw(graphics, (Pen)pen.Clone());
         }
 
         public Image Draw(Pen pen)

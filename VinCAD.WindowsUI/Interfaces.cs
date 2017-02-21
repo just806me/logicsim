@@ -24,6 +24,8 @@ namespace VinCAD.WindowsUI
 
     public interface ISelectable
     {
+        bool IsSelected { get; set; }
+
         bool ContainsPoint(Point p);
         bool IsInRectangle(Rectangle bounds);
     }
