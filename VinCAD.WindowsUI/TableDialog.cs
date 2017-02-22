@@ -48,7 +48,7 @@ namespace VinCAD.WindowsUI
 					}
 					else
 					{
-						row.Cells[c].Value = table[r, h].Value.HasValue ? Convert.ToInt16(table[r, h].Value).ToString() : "null";
+						row.Cells[c].Value = table[r, h].isSet ? Convert.ToInt16(table[r, h].Value).ToString() : "null";
 						c++;
 						row.Cells[c].Value = Convert.ToInt16(table[r, h].Delay);
 					}

@@ -247,6 +247,7 @@ namespace VinCAD.Main
 				state[state.Length - i - 1] = new ElementValue();
 				state[state.Length - i - 1].Value = ((stateNumber >> i) & 1) == 1;
 				state[state.Length - i - 1].Delay = 0;
+				state[state.Length - i - 1].isSet = true;
 			}
 
 			SetCurrentState(state);
@@ -288,14 +289,14 @@ namespace VinCAD.Main
 			while (changed)
 			{
 				changed = false;
-				foreach (var component in _components.Where(x => !x.Value.Value.HasValue))
+				foreach (var component in _components.Where(x => !x.Value.isSet))
 				{
 					var values = new ElementValue[component.Input.Count];
 					for (int i = 0; i < component.Input.Count; i++)
 						values[i] = GetElementValue(component.Input.ElementAt(i), true);
 
 					component.Calculate(values);
-					if (component.Value.Value.HasValue)
+					if (component.Value.isSet)
 						changed = true;
 				}
 			}
@@ -317,9 +318,7 @@ namespace VinCAD.Main
 
 			if (match == null)
 				throw new InputNotFoundException() { InputName = name };
-			if (!(match.Value.Value.HasValue || noValueAllow))
-				throw new InputHasNoValueException() { InputName = name };
-			if (!(match.Value.Delay.HasValue || noValueAllow))
+			if (!(match.Value.isSet || noValueAllow))
 				throw new InputHasNoValueException() { InputName = name };
 
 			return match.Value;
@@ -408,7 +407,7 @@ namespace VinCAD.Main
 			uint[] LastInputChangeTick = new uint[_inputs.Count];
 			ElementValue[] state = new ElementValue[_inputs.Count];
 			for (int i = 0; i < _inputs.Count; i++)
-				state[i] = new ElementValue() { Delay = 0, Value = false };
+				state[i] = new ElementValue() { Delay = 0, Value = false, isSet = true };
 
 			bool[,] inputValues = new bool[_inputs.Count, TimeLimit];
 			ElementValue[,] outputValue = new ElementValue[_outputs.Count, TimeLimit];
@@ -418,23 +417,23 @@ namespace VinCAD.Main
 			{
 				for (int i = 0; i < _inputs.Count; i++)
 				{
-					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i, state[i].Value.Value ? 1 : 0])
+					if (CurrentTick - LastInputChangeTick[i] >= InputDelays[i, state[i].Value ? 1 : 0])
 					{
 						LastInputChangeTick[i] = CurrentTick;
 						state[i].Value = !state[i].Value;
 					}
 
-					inputValues[i, CurrentTick] = state[i].Value.Value;
+					inputValues[i, CurrentTick] = state[i].Value;
 				}
 
 				SetCurrentState(state);
 				CalculateCycleForCurrentState();
 
 				for (int i = 0; i < _outputs.Count; i++)
-					if (_outputs[i].Value.Value.HasValue)
+					if (_outputs[i].Value.isSet)
 					{
 						outputValue[i, CurrentTick] = _outputs[i].Value;
-						maxDelay = Math.Max(maxDelay, _outputs[i].Value.Delay.Value);
+						maxDelay = Math.Max(maxDelay, _outputs[i].Value.Delay);
 					}
 					else
 						outputValue[i, CurrentTick] =
@@ -453,12 +452,12 @@ namespace VinCAD.Main
 				}
 				else
 				{
-					if (outputValue[rw - _inputs.Count, 0].Value.HasValue)
+					if (outputValue[rw - _inputs.Count, 0].isSet)
 					{
 						sigLv.Add(new Point(fieldFirstWidth,
-							(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
+							(int)((rw + (outputValue[rw - _inputs.Count, 0].Value ? .3f : 1f)) * fieldHeight)));
 						sigLv.Add(new Point(fieldFirstWidth + fieldStepWidth,
-							(int)((rw + (outputValue[rw - _inputs.Count, 0].Value.Value ? .3f : 1f)) * fieldHeight)));
+							(int)((rw + (outputValue[rw - _inputs.Count, 0].Value ? .3f : 1f)) * fieldHeight)));
 					}
 				}
 
@@ -473,34 +472,34 @@ namespace VinCAD.Main
 					}
 					else
 					{
-						if (outputValue[rw - _inputs.Count, tick].Value.HasValue)
-							if (outputValue[rw - _inputs.Count, tick - 1].Value.HasValue)
+						if (outputValue[rw - _inputs.Count, tick].isSet)
+							if (outputValue[rw - _inputs.Count, tick - 1].isSet)
 							{
-								if (outputValue[rw - _inputs.Count, tick - 1].Value.Value ^ outputValue[rw - _inputs.Count, tick].Value.Value)
+								if (outputValue[rw - _inputs.Count, tick - 1].Value ^ outputValue[rw - _inputs.Count, tick].Value)
 								{
-									int dx = (int)(fieldStepWidth * outputValue[rw - _inputs.Count, tick].Delay.Value / (maxDelay + 1));// (_componentLayers.Count + 1));
+									int dx = (int)(fieldStepWidth * outputValue[rw - _inputs.Count, tick].Delay / (maxDelay + 1));// (_componentLayers.Count + 1));
 									sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth + dx,
-										(int)((rw + (outputValue[rw - _inputs.Count, tick - 1].Value.Value ? .3f : 1f)) * fieldHeight))); // last
+										(int)((rw + (outputValue[rw - _inputs.Count, tick - 1].Value ? .3f : 1f)) * fieldHeight))); // last
 
 									sigLv.Add(new Point(dx + fieldFirstWidth + tick * fieldStepWidth,
-									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value ? .3f : 1f)) * fieldHeight)));
 									sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
-										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value ? .3f : 1f)) * fieldHeight)));
 								}
 								else
 								{
 									sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
-										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value ? .3f : 1f)) * fieldHeight)));
 									sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
-										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+										(int)((rw + (outputValue[rw - _inputs.Count, tick].Value ? .3f : 1f)) * fieldHeight)));
 								}
 							}
 							else
 							{
 								sigLv.Add(new Point(fieldFirstWidth + tick * fieldStepWidth,
-									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value ? .3f : 1f)) * fieldHeight)));
 								sigLv.Add(new Point(fieldFirstWidth + (tick + 1) * fieldStepWidth,
-									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value.Value ? .3f : 1f)) * fieldHeight)));
+									(int)((rw + (outputValue[rw - _inputs.Count, tick].Value ? .3f : 1f)) * fieldHeight)));
 							}
 					}
 				}
@@ -553,8 +552,8 @@ namespace VinCAD.Main
                 List<Point> sigLv = new List<Point>();
                 for (int st = 0; st < ImgColumns - 1; st++)
                 {
-                    sigLv.Add(new Point((st + 1) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
-                    sigLv.Add(new Point((st + 2) * fieldWidth, (int)((rw - (table[st, rw].Value.Value ? -.3f : -1)) * fieldHeight)));
+                    sigLv.Add(new Point((st + 1) * fieldWidth, (int)((rw - (table[st, rw].Value ? -.3f : -1)) * fieldHeight)));
+                    sigLv.Add(new Point((st + 2) * fieldWidth, (int)((rw - (table[st, rw].Value ? -.3f : -1)) * fieldHeight)));
                 }
 
                 gr.DrawLines(gridPen, sigLv.ToArray());
