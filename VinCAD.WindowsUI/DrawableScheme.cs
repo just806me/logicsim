@@ -145,7 +145,7 @@ namespace VinCAD.WindowsUI
                 _bitmap.Dispose();
 
             _bitmap = new Bitmap(width, height);
-            _graphics = Graphics.FromImage(_bitmap);
+			_graphics = Graphics.FromImage(_bitmap);
         }
 
         public void MoveElements(int dx, int dy)
