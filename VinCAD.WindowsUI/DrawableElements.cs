@@ -18,6 +18,7 @@ namespace VinCAD.WindowsUI
         {
             Dx = dx;
             Dy = dy;
+            Ignore = ignore;
         }
     }
 
@@ -506,7 +507,7 @@ namespace VinCAD.WindowsUI
 
         private void Start_OnMove(object sender, OnMoveEventArgs e)
         {
-            if (e.Ignore == this && !_segments.Any())
+            if (e.Ignore == this || !_segments.Any())
                 return;
 
             switch (_segments[0].Direction)
@@ -514,18 +515,20 @@ namespace VinCAD.WindowsUI
                 case Direction.X:
                     _segments[0].Length -= e.Dx;
 
-                    if (_segments.Count > 1)
-                        _segments[1].Length -= e.Dy;
-                    else
-                        End.Move(0, e.Dy, this);
+                    if (e.Dy != 0)
+                        if (_segments.Count > 1)
+                            _segments[1].Length -= e.Dy;
+                        else
+                            End.Move(0, e.Dy, this);
                     break;
                 case Direction.Y:
                     _segments[0].Length -= e.Dy;
 
-                    if (_segments.Count > 1)
-                        _segments[1].Length -= e.Dx;
-                    else
-                        End.Move(e.Dx, 0, this);
+                    if (e.Dx != 0)
+                        if (_segments.Count > 1)
+                            _segments[1].Length -= e.Dx;
+                        else
+                            End.Move(e.Dx, 0, this);
                     break;
                 default:
                     break;
@@ -534,7 +537,7 @@ namespace VinCAD.WindowsUI
 
         private void End_OnMove(object sender, OnMoveEventArgs e)
         {
-            if (e.Ignore == this && !_segments.Any())
+            if (e.Ignore == this || !_segments.Any())
                 return;
 
             switch (_segments.Last().Direction)
@@ -542,18 +545,20 @@ namespace VinCAD.WindowsUI
                 case Direction.X:
                     _segments.Last().Length += e.Dx;
 
-                    if (_segments.Count > 1)
-                        _segments[_segments.Count - 2].Length += e.Dy;
-                    else
-                        Start.Move(0, e.Dy, this);
+                    if (e.Dy != 0)
+                        if (_segments.Count > 1)
+                            _segments[_segments.Count - 2].Length += e.Dy;
+                        else
+                            Start.Move(0, e.Dy, this);
                     break;
                 case Direction.Y:
                     _segments.Last().Length += e.Dy;
 
-                    if (_segments.Count > 1)
-                        _segments[_segments.Count - 2].Length += e.Dx;
-                    else
-                        Start.Move(e.Dx, 0, this);
+                    if (e.Dx != 0)
+                        if (_segments.Count > 1)
+                            _segments[_segments.Count - 2].Length += e.Dx;
+                        else
+                            Start.Move(e.Dx, 0, this);
                     break;
                 default:
                     break;
@@ -605,16 +610,18 @@ namespace VinCAD.WindowsUI
                 switch (direction)
                 {
                     case Direction.X:
-                        if (_segments.Count > 1)
-                            _segments[_segments.Count - 2].Length += dy;
-                        else
-                            _segments.Add(new LineSegment(Direction.Y, dy));
+                        if (dy != 0)
+                            if (_segments.Count > 1)
+                                _segments[_segments.Count - 2].Length += dy;
+                            else
+                                _segments.Add(new LineSegment(Direction.Y, dy));
                         break;
                     case Direction.Y:
-                        if (_segments.Count > 1)
-                            _segments[_segments.Count - 2].Length += dx;
-                        else
-                            _segments.Add(new LineSegment(Direction.X, dx));
+                        if (dx != 0)
+                            if (_segments.Count > 1)
+                                _segments[_segments.Count - 2].Length += dx;
+                            else
+                                _segments.Add(new LineSegment(Direction.X, dx));
                         break;
                 }
             }
