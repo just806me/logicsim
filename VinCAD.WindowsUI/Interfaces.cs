@@ -18,7 +18,7 @@ namespace VinCAD.WindowsUI
         int Width { get; }
         int Height { get; }
 
-        bool Move(int dx, int dy, object eventIgnore = null);
+		bool Move(int dx, int dy, bool callEvent = true, object eventIgnore = null);
         event EventHandler<OnMoveEventArgs> OnMove;
     }
 

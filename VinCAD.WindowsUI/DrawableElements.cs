@@ -14,13 +14,13 @@ namespace VinCAD.WindowsUI
 		public int Dy;
 		public object Ignore;
 
-        public OnMoveEventArgs(int dx, int dy, object ignore)
-        {
-            Dx = dx;
-            Dy = dy;
-            Ignore = ignore;
-        }
-    }
+		public OnMoveEventArgs(int dx, int dy, object ignore)
+		{
+			Dx = dx;
+			Dy = dy;
+			Ignore = ignore;
+		}
+	}
 
 	public class DrawableComponent : Component, IDrawableElement
 	{
@@ -196,9 +196,10 @@ namespace VinCAD.WindowsUI
 			|| rectangle.Contains(X + Width, Y)
 			|| rectangle.Contains(X + Width, Y + Height);
 
-		public bool Move(int dx, int dy, object eventIgnore = null)
+		public bool Move(int dx, int dy, bool callEvent = true, object eventIgnore = null)
 		{
-			OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy, eventIgnore));
+			if (callEvent)
+				OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy, eventIgnore));
 
 			X += dx;
 			Y += dy;
@@ -250,9 +251,10 @@ namespace VinCAD.WindowsUI
 			|| rectangle.Contains(X + Width, Y)
 			|| rectangle.Contains(X + Width, Y + Height);
 
-		public bool Move(int dx, int dy, object eventIgnore = null)
+		public bool Move(int dx, int dy, bool callEvent = true, object eventIgnore = null)
 		{
-			OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy, eventIgnore));
+			if (callEvent)
+				OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy, eventIgnore));
 
 			X += dx;
 			Y += dy;
@@ -304,9 +306,10 @@ namespace VinCAD.WindowsUI
 			|| rectangle.Contains(X + Width, Y)
 			|| rectangle.Contains(X + Width, Y + Height);
 
-		public bool Move(int dx, int dy, object eventIgnore = null)
+		public bool Move(int dx, int dy, bool callEvent = true, object eventIgnore = null)
 		{
-			OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy, eventIgnore));
+			if (callEvent)
+				OnMove?.Invoke(this, new OnMoveEventArgs(dx, dy, eventIgnore));
 
 			X += dx;
 			Y += dy;
@@ -467,7 +470,7 @@ namespace VinCAD.WindowsUI
 						delta = segmentPoint.X - prevX;
 						prevX += _segments[i].Length;
 
-						if (Math.Abs(segmentPoint.Y - prevY) <= SelectDelta / 2 
+						if (Math.Abs(segmentPoint.Y - prevY) <= SelectDelta / 2
 							&& (_segments[i].Length >= 0 ? delta <= _segments[i].Length && delta > 0 : delta >= _segments[i].Length && delta < 0))
 						{
 							segmentIndex = i;
@@ -510,65 +513,65 @@ namespace VinCAD.WindowsUI
 				return false;
 		}
 
-        private void Start_OnMove(object sender, OnMoveEventArgs e)
-        {
-            if (e.Ignore == this || !_segments.Any())
-                return;
+		private void Start_OnMove(object sender, OnMoveEventArgs e)
+		{
+			if (e.Ignore == this || !_segments.Any())
+				return;
 
 			switch (_segments[0].Direction)
 			{
 				case Direction.X:
 					_segments[0].Length -= e.Dx;
 
-                    if (e.Dy != 0)
-                        if (_segments.Count > 1)
-                            _segments[1].Length -= e.Dy;
-                        else
-                            End.Move(0, e.Dy, this);
-                    break;
-                case Direction.Y:
-                    _segments[0].Length -= e.Dy;
+					if (e.Dy != 0)
+						if (_segments.Count > 1)
+							_segments[1].Length -= e.Dy;
+						else
+							End.Move(0, e.Dy, eventIgnore: this);
+					break;
+				case Direction.Y:
+					_segments[0].Length -= e.Dy;
 
-                    if (e.Dx != 0)
-                        if (_segments.Count > 1)
-                            _segments[1].Length -= e.Dx;
-                        else
-                            End.Move(e.Dx, 0, this);
-                    break;
-                default:
-                    break;
-            }
-        }
+					if (e.Dx != 0)
+						if (_segments.Count > 1)
+							_segments[1].Length -= e.Dx;
+						else
+							End.Move(e.Dx, 0, eventIgnore: this);
+					break;
+				default:
+					break;
+			}
+		}
 
-        private void End_OnMove(object sender, OnMoveEventArgs e)
-        {
-            if (e.Ignore == this || !_segments.Any())
-                return;
+		private void End_OnMove(object sender, OnMoveEventArgs e)
+		{
+			if (e.Ignore == this || !_segments.Any())
+				return;
 
 			switch (_segments.Last().Direction)
 			{
 				case Direction.X:
 					_segments.Last().Length += e.Dx;
 
-                    if (e.Dy != 0)
-                        if (_segments.Count > 1)
-                            _segments[_segments.Count - 2].Length += e.Dy;
-                        else
-                            Start.Move(0, e.Dy, this);
-                    break;
-                case Direction.Y:
-                    _segments.Last().Length += e.Dy;
+					if (e.Dy != 0)
+						if (_segments.Count > 1)
+							_segments[_segments.Count - 2].Length += e.Dy;
+						else
+							Start.Move(0, e.Dy, eventIgnore: this);
+					break;
+				case Direction.Y:
+					_segments.Last().Length += e.Dy;
 
-                    if (e.Dx != 0)
-                        if (_segments.Count > 1)
-                            _segments[_segments.Count - 2].Length += e.Dx;
-                        else
-                            Start.Move(e.Dx, 0, this);
-                    break;
-                default:
-                    break;
-            }
-        }
+					if (e.Dx != 0)
+						if (_segments.Count > 1)
+							_segments[_segments.Count - 2].Length += e.Dx;
+						else
+							Start.Move(e.Dx, 0, eventIgnore: this);
+					break;
+				default:
+					break;
+			}
+		}
 
 		public void AddLineSegmentAtPoint(Point point, bool isLast, bool canAddToExisting = true)
 		{
@@ -610,27 +613,27 @@ namespace VinCAD.WindowsUI
 			else
 				_segments.Add(new LineSegment(direction, length));
 
-            if (isLast)
-            {
-                switch (direction)
-                {
-                    case Direction.X:
-                        if (dy != 0)
-                            if (_segments.Count > 1)
-                                _segments[_segments.Count - 2].Length += dy;
-                            else
-                                _segments.Add(new LineSegment(Direction.Y, dy));
-                        break;
-                    case Direction.Y:
-                        if (dx != 0)
-                            if (_segments.Count > 1)
-                                _segments[_segments.Count - 2].Length += dx;
-                            else
-                                _segments.Add(new LineSegment(Direction.X, dx));
-                        break;
-                }
-            }
-        }
+			if (isLast)
+			{
+				switch (direction)
+				{
+					case Direction.X:
+						if (dy != 0)
+							if (_segments.Count > 1)
+								_segments[_segments.Count - 2].Length += dy;
+							else
+								_segments.Add(new LineSegment(Direction.Y, dy));
+						break;
+					case Direction.Y:
+						if (dx != 0)
+							if (_segments.Count > 1)
+								_segments[_segments.Count - 2].Length += dx;
+							else
+								_segments.Add(new LineSegment(Direction.X, dx));
+						break;
+				}
+			}
+		}
 
 		public void Dispose() => Dispose(true);
 
