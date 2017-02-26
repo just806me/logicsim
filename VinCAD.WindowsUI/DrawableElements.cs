@@ -406,9 +406,8 @@ namespace VinCAD.WindowsUI
 		public bool IsSelected { get; set; }
 
 		[JsonConstructor]
-		public Line(string startName, string endName, IEnumerable<LineSegment> segments)
+		public Line(string startName, string endName)
 		{
-			_segments = segments.ToList();
 			Start = new DrawableInput(startName);
 			End = new DrawableInput(endName);
 		}
