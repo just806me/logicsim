@@ -70,9 +70,6 @@
 			this.clearElementMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.printDialog = new System.Windows.Forms.PrintDialog();
-#if DEBUG
-			this.sendLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-#endif
 			this.mainMenuStrip.SuspendLayout();
 			this.tableLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -201,11 +198,7 @@
 			// 
 			// helpToolStripMenuItem
 			// 
-			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-#if DEBUG
-            this.sendLogsToolStripMenuItem,
-#endif
-			this.aboutToolStripMenuItem});
+			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aboutToolStripMenuItem });
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this.helpToolStripMenuItem.Text = Resource.Localization.Menu_Main_Help;
@@ -404,16 +397,6 @@
 			this.printDialog.ShowHelp = true;
 			this.printDialog.UseEXDialog = true;
 
-#if DEBUG
-			// 
-			// sendLogsToolStripMenuItem
-			// 
-			this.sendLogsToolStripMenuItem.Name = "sendLogsToolStripMenuItem";
-			this.sendLogsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.sendLogsToolStripMenuItem.Text = "Send logs";
-			this.sendLogsToolStripMenuItem.Click += new System.EventHandler(this.sendLogsToolStripMenuItem_Click);
-#endif
-
 			// 
 			// MainForm
 			// 
@@ -483,9 +466,6 @@
 		private System.Windows.Forms.ToolStripMenuItem moveElementToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem createConnectionToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem timeDiagramToolStripMenuItem;
-#if DEBUG
-		private System.Windows.Forms.ToolStripMenuItem sendLogsToolStripMenuItem;
-#endif
 	}
 }
 

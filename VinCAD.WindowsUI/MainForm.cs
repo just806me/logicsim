@@ -29,11 +29,24 @@ namespace VinCAD.WindowsUI
 
         private bool modified;
 
-        public MainForm(string path)
+#if DEBUG
+		private ToolStripMenuItem sendLogsToolStripMenuItem;
+#endif
+		public MainForm(string path)
         {
             InitializeComponent();
 
-            mainPen = new Pen(Color.Black) { Width = 1 };
+#if DEBUG
+			sendLogsToolStripMenuItem = new ToolStripMenuItem();
+			helpToolStripMenuItem.DropDownItems.Add(sendLogsToolStripMenuItem);
+
+			sendLogsToolStripMenuItem.Name = "sendLogsToolStripMenuItem";
+			sendLogsToolStripMenuItem.Size = new Size(152, 22);
+			sendLogsToolStripMenuItem.Text = "Send logs";
+			sendLogsToolStripMenuItem.Click += new EventHandler(this.sendLogsToolStripMenuItem_Click);
+#endif
+
+			mainPen = new Pen(Color.Black) { Width = 1 };
 
             listBox.Items.AddRange(Enum.GetNames(typeof(ComponentType)));
             listBox.Items.Add(nameof(Input));
