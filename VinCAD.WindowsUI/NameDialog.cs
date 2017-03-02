@@ -14,8 +14,8 @@ namespace VinCAD.WindowsUI
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            NewName = nameTextBox.Text;
-            Close();
+			NewName = nameTextBox.Text = nameTextBox.Text.Trim();
+			Close();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)

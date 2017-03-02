@@ -69,8 +69,10 @@ namespace VinCAD.WindowsUI
 			connectLine = null;
 			menuElement = null;
 			move = false;
+            scheme?.Dispose();
+            scheme = null;
 
-			if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
 			{
 				scheme = new DrawableScheme(pictureBox.Width, pictureBox.Height);
 				filename = null;
@@ -108,6 +110,7 @@ namespace VinCAD.WindowsUI
 			connectLine = null;
 			menuElement = null;
 			move = false;
+            scheme?.Dispose();
 
 			scheme = DrawableScheme.FromScheme(source, pictureBox.Width, pictureBox.Height);
 
@@ -440,7 +443,7 @@ namespace VinCAD.WindowsUI
 							})
 							.Max() : 0);
 
-						dragElement = new DrawableOutput($"y{max_output_number + 1}", string.Empty, 0, 0) { IsSelected = true };
+						dragElement = new DrawableOutput($"y{max_output_number + 1}", null, 0, 0) { IsSelected = true };
 					}
 					break;
 				default:
@@ -559,11 +562,10 @@ namespace VinCAD.WindowsUI
 
 		private void renameElementToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (menuElement is IDrawableElement)
-				using (var dialog = new NameDialog())
-					if (dialog.ShowDialog() == DialogResult.OK)
-					{
-						modified = true;
+			using (var dialog = new NameDialog())
+				if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(dialog.NewName))
+				{
+					modified = true;
 
 						foreach (Output output in scheme.Elements.Where(x => x is Output && (x as Output).Input == ((IDrawableElement)menuElement).Name))
 							output.Input = dialog.NewName;
