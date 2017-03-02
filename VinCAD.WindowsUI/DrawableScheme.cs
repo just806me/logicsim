@@ -197,7 +197,12 @@ namespace VinCAD.WindowsUI
 
         public void RemoveLine(Line line)
         {
-            _lines.Remove(line);
+			if (line.End is Output)
+				((Output)line.End).Input = null;
+			else if (line.End is Component)
+				((Component)line.End).RemoveInput(line.StartName);
+
+			_lines.Remove(line);
             line.Dispose();
         }
 
