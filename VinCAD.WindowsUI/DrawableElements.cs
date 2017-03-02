@@ -5,6 +5,7 @@ using System.Drawing;
 using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace VinCAD.WindowsUI
 {
@@ -342,10 +343,12 @@ namespace VinCAD.WindowsUI
 		[JsonRequired]
 		public string EndName => End.Name;
 
-		[JsonRequired]
-		private List<LineSegment> _segments;
+        [JsonRequired]
+        public ReadOnlyCollection<LineSegment> Segments => _segments.AsReadOnly();
+        [JsonIgnore]
+        private readonly List<LineSegment> _segments;
 
-		[JsonIgnore]
+        [JsonIgnore]
 		private IDrawableElement _start;
 		[JsonIgnore]
 		public IDrawableElement Start
@@ -406,11 +409,12 @@ namespace VinCAD.WindowsUI
 		public bool IsSelected { get; set; }
 
 		[JsonConstructor]
-		public Line(string startName, string endName)
+		public Line(string startName, string endName, IEnumerable<LineSegment> segments)
 		{
 			Start = new DrawableInput(startName);
 			End = new DrawableInput(endName);
-		}
+            _segments = segments.ToList();
+        }
 
 		public Line(IDrawableElement start, IDrawableElement end)
 		{
