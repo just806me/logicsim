@@ -173,7 +173,7 @@ namespace VinCAD.WindowsUI
         public Image Draw(Pen pen)
         {
             Draw(_graphics, pen, true);
-            return _bitmap;
+            return (Image)_bitmap.Clone();
         }
 
         public IEnumerable<IDrawableElement> GetElementsAtRectangle(Rectangle bounds) 
@@ -197,27 +197,21 @@ namespace VinCAD.WindowsUI
             {
                 if (item is Output)
                 {
-                    var output = item as Output;
-                    if (output.Input == element.Name)
-                        output.Input = null;
+                    if (((Output)item).Input == element.Name)
+                        ((Output)item).Input = null;
 
                 }
                 else if (item is Component)
                 {
-                    var component = item as Component;
-                    if (component.Input.Any(c => c == element.Name))
-                        component.RemoveInput(element.Name);
+                    if (((Component)item).Input.Any(c => c == element.Name))
+                        ((Component)item).RemoveInput(element.Name);
                 }
             }
         }
 
         public void Clear() => _elements.Clear();
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        public void Dispose() => Dispose(true);
 
         protected virtual void Dispose(bool disposing)
         {

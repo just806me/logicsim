@@ -45,8 +45,10 @@ namespace VinCAD.WindowsUI
 			connectLine = null;
 			menuElement = null;
 			move = false;
+            scheme?.Dispose();
+            scheme = null;
 
-			if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
 			{
 				scheme = new DrawableScheme(pictureBox.Width, pictureBox.Height);
                 filename = null;
@@ -78,6 +80,7 @@ namespace VinCAD.WindowsUI
 			connectLine = null;
 			menuElement = null;
 			move = false;
+            scheme?.Dispose();
 
 			scheme = DrawableScheme.FromScheme(source, pictureBox.Width, pictureBox.Height);
 
@@ -235,9 +238,9 @@ namespace VinCAD.WindowsUI
 						var add = !scheme.Elements.Contains(connectLine);
 
 						if (connectLine.connection.Item2 is Component)
-							(connectLine.connection.Item2 as Component).AddInput(connectLine.connection.Item1.Name);
-						else if (connectLine.connection.Item2 is Output && (connectLine.connection.Item2 as Output).Input == string.Empty)
-							(connectLine.connection.Item2 as Output).Input = connectLine.connection.Item1.Name;
+							((Component)connectLine.connection.Item2).AddInput(connectLine.connection.Item1.Name);
+						else if (connectLine.connection.Item2 is Output && string.IsNullOrEmpty(((Output)connectLine.connection.Item2).Input))
+							((Output)connectLine.connection.Item2).Input = connectLine.connection.Item1.Name;
 						else
 							add = false;
 
@@ -456,8 +459,12 @@ namespace VinCAD.WindowsUI
 
 		private void pictureBox_SizeChanged(object sender, EventArgs e)
 		{
-			scheme.SetSize(pictureBox.Width, pictureBox.Height);
-			DrawScheme();
+            // mono fix
+            if (scheme != null)
+            {
+                scheme.SetSize(pictureBox.Width, pictureBox.Height);
+                DrawScheme();
+            }
 		}
 
 		private void printToolStripMenuItem_Click(object sender, EventArgs e)
