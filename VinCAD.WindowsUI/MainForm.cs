@@ -362,7 +362,7 @@ namespace VinCAD.WindowsUI
 
                         dragElement = new DrawableOutput(
 							$"y{max_output_number + 1}",
-							string.Empty,
+							null,
 							0, 0,
 							DrawableScheme.ElementWidth,
 							DrawableScheme.ElementHeight
@@ -472,7 +472,7 @@ namespace VinCAD.WindowsUI
 		private void renameElementToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (var dialog = new NameDialog())
-				if (dialog.ShowDialog() == DialogResult.OK)
+				if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(dialog.NewName))
 				{
 					modified = true;
 
