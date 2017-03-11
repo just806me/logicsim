@@ -177,20 +177,13 @@ namespace VinCAD.WindowsUI
         {
             _elements.Remove(element);
 
-            foreach (var item in _elements)
-            {
-                if (item is Output)
-                {
-                    if (((Output)item).Input == element.Name)
-                        ((Output)item).Input = string.Empty;
+            var linesToRemove = new List<Line>();
+            foreach (var line in _lines)
+                if (line.Start == element || line.End == element)
+                    linesToRemove.Add(line);
 
-                }
-                else if (item is Component)
-                {
-                    if (((Component)item).Input.Any(c => c == element.Name))
-                        ((Component)item).RemoveInput(element.Name);
-                }
-            }
+            foreach (var line in linesToRemove)
+                RemoveLine(line);
         }
 
         public void RemoveLine(Line line)
