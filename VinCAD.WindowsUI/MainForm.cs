@@ -318,12 +318,11 @@ namespace VinCAD.WindowsUI
 				{
 					modified = true;
 
-					var toDelete = scheme.Selectable.Where(x => x.ContainsPoint(e.Location)).ToArray();
-					foreach (var item in toDelete)
-						if (item is IDrawableElement)
-							scheme.RemoveElement((IDrawableElement)item);
-						else if (item is Line)
-							scheme.RemoveLine((Line)item);
+					var toDelete = scheme.Selectable.FirstOrDefault(x => x.ContainsPoint(e.Location));
+					if (toDelete is IDrawableElement)
+						scheme.RemoveElement((IDrawableElement)toDelete);
+					else if (toDelete is Line)
+						scheme.RemoveLine((Line)toDelete);
 
 					DrawScheme();
 				}
