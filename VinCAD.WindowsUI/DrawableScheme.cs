@@ -182,7 +182,7 @@ namespace VinCAD.WindowsUI
                 if (item is Output)
                 {
                     if (((Output)item).Input == element.Name)
-                        ((Output)item).Input = null;
+                        ((Output)item).Input = string.Empty;
 
                 }
                 else if (item is Component)
@@ -196,7 +196,7 @@ namespace VinCAD.WindowsUI
         public void RemoveLine(Line line)
         {
 			if (line.End is Output)
-				((Output)line.End).Input = null;
+				((Output)line.End).Input = string.Empty;
 			else if (line.End is Component)
 				((Component)line.End).RemoveInput(line.StartName);
 

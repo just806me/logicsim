@@ -283,7 +283,7 @@ namespace VinCAD.WindowsUI
 
 						if (underMouseElement is Component)
 							((Component)underMouseElement).AddInput(connectLine.StartName);
-						else if (underMouseElement is Output && ((Output)underMouseElement).Input == string.Empty)
+						else if (underMouseElement is Output && string.IsNullOrEmpty(((Output)underMouseElement).Input))
 							((Output)underMouseElement).Input = connectLine.StartName;
 						else
 							add = false;
@@ -443,7 +443,7 @@ namespace VinCAD.WindowsUI
 							})
 							.Max() : 0);
 
-						dragElement = new DrawableOutput($"y{max_output_number + 1}", null, 0, 0) { IsSelected = true };
+						dragElement = new DrawableOutput($"y{max_output_number + 1}", string.Empty, 0, 0) { IsSelected = true };
 					}
 					break;
 				default:
@@ -649,10 +649,10 @@ namespace VinCAD.WindowsUI
 						break;
 				}
 
-			using (var form = new EquationDialog())
-				if (form.ShowDialog() == DialogResult.OK)
+			using (var dialog = new EquationDialog())
+				if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(dialog.Equation))
 				{
-					LoadScheme(Scheme.FromEquation(form.Equation));
+					LoadScheme(Scheme.FromEquation(dialog.Equation));
 					modified = true;
 				}
 		}
